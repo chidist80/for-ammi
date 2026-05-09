@@ -1100,88 +1100,101 @@
   }
 
   /* ==================================================================
-     Memory Garden — interactive game with surprise
+     Memory Garden — fullscreen interactive game with surprise
      ================================================================== */
   #scene-garden {
-    padding: 6vh 4vw;
-    justify-content: center;
-    align-items: center;
-  }
-  .garden-shell {
-    width: 100%;
-    max-width: 780px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .garden-prompt {
-    font-family: "Caveat", cursive;
-    font-weight: 600;
-    font-size: clamp(1.3rem, 2.4vw, 1.6rem);
-    color: var(--coral);
-    margin: 1.5vh 0 2vh;
-    text-align: center;
-    opacity: 0;
-    transition: opacity 1s var(--ease-soft);
-  }
-  .garden-prompt.show { opacity: 0.85; }
-  .garden-prompt.hide { opacity: 0; pointer-events: none; }
-
-  .garden-stage {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    min-height: 280px;
-    background:
-      linear-gradient(180deg,
-        #c4ddec 0%,
-        #ddeef6 25%,
-        #ffe4c2 45%,
-        #ffd092 50%,
-        #8b6f4e 50.5%,
-        #6b5340 70%,
-        #4a3a2a 100%);
-    border-radius: 8px;
+    padding: 0;
     overflow: hidden;
-    box-shadow: 0 18px 40px rgba(58, 36, 24, 0.22), inset 0 0 0 1px rgba(58, 36, 24, 0.1);
+    background: #0a0612;
   }
-  /* Sun in the garden sky */
-  .garden-stage::before {
-    content: "";
+
+  .garden-sky {
     position: absolute;
-    top: 8%;
-    right: 12%;
-    width: 50px;
-    height: 50px;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60%;
+    background: linear-gradient(180deg,
+      #b9def0 0%,
+      #d1ebf5 25%,
+      #ffe2c2 50%,
+      #ffd092 75%,
+      #ffb888 100%);
+    z-index: 1;
+  }
+
+  .garden-sun-big {
+    position: absolute;
+    top: 14%;
+    right: 14%;
+    width: clamp(80px, 12vw, 140px);
+    aspect-ratio: 1;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #fff8e0, #ffd980);
-    box-shadow: 0 0 30px rgba(255, 217, 128, 0.6);
+    background: radial-gradient(circle at 35% 35%, #fff8e0, #ffd980 60%, #ffa45c 100%);
+    box-shadow:
+      0 0 60px rgba(255, 217, 128, 0.7),
+      0 0 140px rgba(255, 164, 92, 0.4);
+    z-index: 2;
+    animation: sunGlow 4s ease-in-out infinite alternate;
   }
-  /* Grass line at the soil edge */
-  .garden-stage::after {
+
+  .garden-cloud {
+    position: absolute;
+    background: rgba(255, 246, 233, 0.85);
+    border-radius: 50%;
+    filter: blur(0.5px);
+    z-index: 2;
+    animation: drift var(--cloud-dur, 90s) linear infinite;
+  }
+
+  .garden-hills {
+    position: absolute;
+    bottom: calc(40% - 8vh);
+    left: 0;
+    right: 0;
+    height: 12vh;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .garden-hill {
+    position: absolute;
+    bottom: 0;
+    background: var(--hc, #a85a8c);
+    width: var(--hw, 40vw);
+    height: var(--hh, 10vh);
+    clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+    opacity: 0.8;
+  }
+
+  .garden-soil {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    cursor: none;
+    background: linear-gradient(180deg,
+      #8b6f4e 0%,
+      #6b5340 30%,
+      #4a3a2a 70%,
+      #3a2c1f 100%);
+    z-index: 3;
+  }
+  .garden-soil::before {
+    /* Grass tuft border at the horizon */
     content: "";
     position: absolute;
-    top: 49%;
+    top: 0;
     left: 0;
     right: 0;
     height: 6px;
     background: linear-gradient(180deg, #8fb573 0%, #5a8243 100%);
     box-shadow: 0 -2px 0 #8fb573;
   }
-
-  .garden-soil {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    cursor: none;
-  }
-  .garden-soil::before {
-    /* Tiny grass tufts above soil */
+  .garden-soil::after {
     content: "";
     position: absolute;
-    top: -4px;
+    top: 0;
     left: 0;
     right: 0;
     height: 14px;
@@ -1192,11 +1205,68 @@
     opacity: 0.5;
   }
 
-  /* Pixel flower */
+  /* Top UI */
+  .garden-eyebrow {
+    position: absolute;
+    top: 5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 25;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 0.7rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--coral);
+    text-shadow: 0 1px 6px rgba(255, 246, 233, 0.7);
+    opacity: 0;
+    transition: opacity 1.4s var(--ease) 0.3s;
+  }
+  .garden-eyebrow.show { opacity: 0.9; }
+
+  .garden-counter {
+    position: absolute;
+    top: 9vh;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 25;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 0.7rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    text-shadow: 0 1px 6px rgba(255, 246, 233, 0.7);
+    opacity: 0.85;
+    transition: opacity 0.6s var(--ease-soft);
+  }
+  .garden-counter.fade { opacity: 0; }
+
+  .garden-prompt {
+    position: absolute;
+    bottom: 44%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 25;
+    font-family: "Caveat", cursive;
+    font-weight: 600;
+    font-size: clamp(1.4rem, 2.8vw, 1.9rem);
+    color: var(--coral);
+    text-align: center;
+    text-shadow: 0 2px 8px rgba(255, 246, 233, 0.7);
+    opacity: 0;
+    transition: opacity 1s var(--ease-soft);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .garden-prompt.show { opacity: 0.9; animation: pulseSoft 3s ease-in-out infinite; }
+  .garden-prompt.hide { opacity: 0; }
+
+  /* Pixel flower — bigger, wind-swayed */
   .garden-flower {
     position: absolute;
-    width: 32px;
-    height: 56px;
+    width: 44px;
+    height: 80px;
     transform: translate(-50%, -100%) scale(0);
     transform-origin: 50% 100%;
     pointer-events: none;
@@ -1204,15 +1274,25 @@
   }
   @keyframes flowerGrow {
     0%   { transform: translate(-50%, -100%) scale(0); }
-    50%  { transform: translate(-50%, -100%) scale(0.5); }
-    75%  { transform: translate(-50%, -100%) scale(1.15); }
+    55%  { transform: translate(-50%, -100%) scale(0.5); }
+    78%  { transform: translate(-50%, -100%) scale(1.18); }
     100% { transform: translate(-50%, -100%) scale(1); }
+  }
+  .garden-flower .stem-wrap {
+    position: absolute;
+    inset: 0;
+    transform-origin: 50% 100%;
+    animation: sway var(--sway-dur, 3.5s) ease-in-out infinite;
+  }
+  @keyframes sway {
+    0%, 100% { transform: rotate(-2deg); }
+    50%      { transform: rotate(2deg); }
   }
   .garden-flower .stem {
     position: absolute;
     bottom: 0;
     left: 50%;
-    width: 3px;
+    width: 4px;
     height: 60%;
     background: #4a7c3c;
     transform: translateX(-50%);
@@ -1221,128 +1301,232 @@
   .garden-flower .leaf {
     position: absolute;
     bottom: 24%;
-    width: 12px;
-    height: 7px;
+    width: 14px;
+    height: 8px;
     background: #5a8c4c;
     border-radius: 50% 50% 0 0;
   }
-  .garden-flower .leaf.left  { left: 18%;  transform: rotate(-30deg); }
-  .garden-flower .leaf.right { right: 18%; transform: rotate(30deg); }
+  .garden-flower .leaf.left  { left: 12%;  transform: rotate(-30deg); }
+  .garden-flower .leaf.right { right: 12%; transform: rotate(30deg); }
   .garden-flower .bloom {
     position: absolute;
-    top: 6px;
+    top: 8px;
     left: 50%;
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
     transform: translateX(-50%);
     background: var(--bc, #f06888);
     border-radius: 50%;
     box-shadow:
-      -8px 0 0 var(--bc, #f06888),
-       8px 0 0 var(--bc, #f06888),
-       0 -8px 0 var(--bc, #f06888),
-       0  8px 0 var(--bc, #f06888);
+      -11px 0 0 var(--bc, #f06888),
+       11px 0 0 var(--bc, #f06888),
+       0 -11px 0 var(--bc, #f06888),
+       0  11px 0 var(--bc, #f06888),
+       /* diagonal petals (8-petal flower) */
+       -8px -8px 0 var(--bc, #f06888),
+        8px -8px 0 var(--bc, #f06888),
+       -8px  8px 0 var(--bc, #f06888),
+        8px  8px 0 var(--bc, #f06888);
   }
   .garden-flower .bloom::after {
     content: "";
     position: absolute;
-    inset: 4px;
+    inset: 5px;
     background: #ffd36b;
     border-radius: 50%;
-    box-shadow: 0 0 0 1px rgba(58, 36, 24, 0.15);
+    box-shadow: 0 0 0 1px rgba(58, 36, 24, 0.18);
   }
 
   /* Flying-into-formation transition */
   .garden-flower.formation {
     animation: none;
     transition:
-      left 2.4s cubic-bezier(.5, -0.2, .3, 1.4),
-      top  2.4s cubic-bezier(.5, -0.2, .3, 1.4);
-    transform: translate(-50%, -100%) scale(1.2);
-    z-index: 5;
-    filter: drop-shadow(0 0 10px var(--bc, #f06888));
+      left 2.6s cubic-bezier(.5, -0.2, .3, 1.4),
+      top  2.6s cubic-bezier(.5, -0.2, .3, 1.4);
+    transform: translate(-50%, -100%) scale(1.3);
+    z-index: 6;
+    filter: drop-shadow(0 0 14px var(--bc, #f06888));
+  }
+  .garden-flower.formation .stem-wrap {
+    animation-duration: 2.5s;
   }
 
-  /* Floating thank-you */
+  /* Heart glow that pulses behind the formation */
+  .garden-heart-glow {
+    position: absolute;
+    left: 50%;
+    bottom: 20%;
+    transform: translateX(-50%) scale(0);
+    width: clamp(280px, 50vmin, 600px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+      rgba(255, 217, 128, 0.55) 0%,
+      rgba(255, 140, 107, 0.35) 30%,
+      rgba(240, 104, 136, 0.18) 55%,
+      transparent 75%);
+    pointer-events: none;
+    z-index: 4;
+    opacity: 0;
+    transition: transform 2s var(--ease), opacity 2s var(--ease);
+  }
+  .garden-heart-glow.show {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+    animation: glowPulse 4s ease-in-out infinite 2s;
+  }
+  @keyframes glowPulse {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
+    50%      { transform: translateX(-50%) scale(1.08); opacity: 0.85; }
+  }
+
+  /* Butterflies orbiting the heart */
+  .butterfly-orbit {
+    position: absolute;
+    left: 50%;
+    bottom: 30%;
+    width: 0;
+    height: 0;
+    z-index: 12;
+    animation: orbitSpin var(--orbit-dur, 12s) linear infinite;
+    pointer-events: none;
+  }
+  @keyframes orbitSpin {
+    from { transform: rotate(var(--orbit-start, 0deg)); }
+    to   { transform: rotate(calc(var(--orbit-start, 0deg) + 360deg)); }
+  }
+  .heart-butterfly {
+    position: absolute;
+    left: var(--orbit-r, 180px);
+    top: 0;
+    width: 18px;
+    height: 14px;
+    transform: translate(-50%, -50%);
+    animation: bWingFlap 0.32s ease-in-out infinite;
+  }
+  .heart-butterfly::before, .heart-butterfly::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 9px;
+    height: 14px;
+    background: var(--bc, #f06888);
+    border-radius: 50% 50% 30% 30%;
+    box-shadow: 0 0 8px var(--bc, #f06888);
+  }
+  .heart-butterfly::before { left: 0; transform-origin: right center; }
+  .heart-butterfly::after  { right: 0; transform-origin: left center; }
+  @keyframes bWingFlap {
+    0%, 100% { transform: translate(-50%, -50%) scale(1, 1); }
+    50%      { transform: translate(-50%, -50%) scale(0.6, 1); }
+  }
+
+  /* Falling rain of petals */
+  .rain-petal {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 50% 50% 30% 30%;
+    z-index: 30;
+    opacity: 0.85;
+    will-change: transform;
+    animation: petalFall linear forwards;
+  }
+  @keyframes petalFall {
+    0%   { transform: translate(0, -10vh) rotate(0deg); }
+    100% { transform: translate(var(--drift, 80px), 110vh) rotate(720deg); }
+  }
+
+  /* Floating thank-you — softer, dreamier */
   .garden-thanks {
     position: absolute;
     font-family: "Caveat", cursive;
     font-weight: 600;
-    font-size: 1.15rem;
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
     color: var(--paper);
-    background: rgba(58, 36, 24, 0.88);
-    padding: 0.45em 0.9em;
-    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(58, 36, 24, 0.92), rgba(74, 40, 24, 0.88));
+    padding: 0.45em 1em;
+    border-radius: 18px;
     pointer-events: none;
     z-index: 10;
     white-space: nowrap;
     transform: translate(-50%, -130%);
-    animation: thanksFloat 3s var(--ease) forwards;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    animation: thanksFloat 3.2s var(--ease) forwards;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.28), 0 0 0 1px rgba(255, 246, 233, 0.1);
+    backdrop-filter: blur(4px);
   }
   @keyframes thanksFloat {
     0%   { opacity: 0; transform: translate(-50%, -110%) scale(0.8); }
-    18%  { opacity: 1; transform: translate(-50%, -150%) scale(1); }
-    78%  { opacity: 1; transform: translate(-50%, -185%) scale(1); }
-    100% { opacity: 0; transform: translate(-50%, -220%) scale(0.9); }
+    14%  { opacity: 1; transform: translate(-50%, -150%) scale(1); }
+    80%  { opacity: 1; transform: translate(-50%, -200%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -240%) scale(0.9); }
   }
 
   /* Sparkles around landed flowers */
   .garden-sparkle {
     position: absolute;
-    width: 6px;
-    height: 6px;
-    background: #fff8e0;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    box-shadow: 0 0 12px #ffd980;
     pointer-events: none;
     z-index: 6;
-    animation: sparkleOut 1.4s ease-out forwards;
+    animation: sparkleOut 1.6s ease-out forwards;
   }
   @keyframes sparkleOut {
     0%   { opacity: 0; transform: translate(-50%, -50%) scale(0); }
-    30%  { opacity: 1; transform: translate(-50%, -50%) scale(1.6); }
+    30%  { opacity: 1; transform: translate(-50%, -50%) scale(1.8); }
     100% { opacity: 0; transform: translate(calc(-50% + var(--sx, 0)), calc(-50% + var(--sy, 0))) scale(0); }
   }
 
-  .garden-counter {
-    font-family: "Inter", sans-serif;
-    font-weight: 500;
-    font-size: 0.7rem;
-    letter-spacing: 0.32em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    margin-top: 2.5vh;
-    text-align: center;
+  /* Sparkle trail during flower flight to formation */
+  .garden-trail {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 5;
+    animation: trailFade 1s ease-out forwards;
+  }
+  @keyframes trailFade {
+    0%   { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
   }
 
+  /* Big final text */
   .garden-final {
-    margin-top: 2.5vh;
+    position: absolute;
+    bottom: 12vh;
+    left: 50%;
+    transform: translateX(-50%);
     text-align: center;
+    z-index: 35;
+    width: 92vw;
+    max-width: 800px;
     opacity: 0;
-    transition: opacity 2s var(--ease) 0.4s;
-    max-width: 540px;
+    transition: opacity 2.4s var(--ease) 0.4s, transform 2.4s var(--ease) 0.4s;
+    pointer-events: none;
   }
-  .garden-final.show { opacity: 1; }
+  .garden-final.show {
+    opacity: 1;
+  }
   .garden-final-1 {
     font-family: "Cormorant Garamond", serif;
     font-style: italic;
     font-weight: 400;
-    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-size: clamp(2.4rem, 6.5vw, 5rem);
     color: var(--coral);
-    margin-bottom: 0.3em;
-    line-height: 1.2;
+    margin-bottom: 0.2em;
+    line-height: 1.1;
+    text-shadow: 0 4px 30px rgba(255, 140, 107, 0.5), 0 1px 4px rgba(255, 246, 233, 0.6);
+    letter-spacing: -0.01em;
   }
   .garden-final-2 {
     font-family: "Caveat", cursive;
     font-weight: 600;
-    font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+    font-size: clamp(1.4rem, 3vw, 2.1rem);
     color: var(--ink);
     line-height: 1.4;
-  }
-
-  @media (max-width: 600px) {
-    .garden-stage { aspect-ratio: 4 / 5; min-height: 360px; }
+    text-shadow: 0 2px 8px rgba(255, 246, 233, 0.7);
   }
 
   /* ==================================================================
@@ -1845,21 +2029,40 @@
 </div>
 
 <!-- ================================================================
-     Scene 7 — Memory Garden (interactive game)
+     Scene 7 — Memory Garden (fullscreen interactive game)
      ================================================================ -->
 <div class="scene" id="scene-garden">
-  <div class="garden-shell">
-    <div class="eyebrow">vii · the garden</div>
-    <div class="garden-prompt" id="gardenPrompt">tap the soil. plant a thank-you for ammi.</div>
-    <div class="garden-stage">
-      <div class="garden-soil" id="gardenSoil" data-hover></div>
-    </div>
-    <div class="garden-counter" id="gardenCounter">0 / 15 planted</div>
-    <div class="garden-final" id="gardenFinal">
-      <div class="garden-final-1">look what we grew.</div>
-      <div class="garden-final-2">— every flower, you.</div>
-    </div>
+  <!-- Sky and atmosphere -->
+  <div class="garden-sky"></div>
+  <div class="garden-sun-big"></div>
+  <div class="garden-cloud" style="top:8%;  left:-10vw; width:90px;  height:24px; --cloud-dur:110s;"></div>
+  <div class="garden-cloud" style="top:18%; left:-10vw; width:140px; height:32px; --cloud-dur:140s; animation-delay:-40s;"></div>
+  <div class="garden-cloud" style="top:12%; left:-10vw; width:60px;  height:18px; --cloud-dur:90s;  animation-delay:-70s;"></div>
+
+  <!-- Distant pixel hills at the horizon -->
+  <div class="garden-hills">
+    <div class="garden-hill" style="--hc:#a85a8c; --hw:50vw; --hh:11vh; left:-10vw;"></div>
+    <div class="garden-hill" style="--hc:#d77a5c; --hw:42vw; --hh:9vh;  left:30vw;"></div>
+    <div class="garden-hill" style="--hc:#7d4a8c; --hw:46vw; --hh:10vh; left:62vw;"></div>
   </div>
+
+  <!-- Soil — clickable -->
+  <div class="garden-soil" id="gardenSoil" data-hover></div>
+
+  <!-- Heart glow that pulses behind the formation -->
+  <div class="garden-heart-glow" id="gardenHeartGlow"></div>
+
+  <!-- UI overlays -->
+  <div class="garden-eyebrow eyebrow">vii · the garden</div>
+  <div class="garden-counter" id="gardenCounter">0 / 15 planted</div>
+  <div class="garden-prompt" id="gardenPrompt">tap the soil. plant a thank-you for ammi.</div>
+
+  <!-- Final big text -->
+  <div class="garden-final" id="gardenFinal">
+    <div class="garden-final-1">look what we grew.</div>
+    <div class="garden-final-2">— every flower, you.</div>
+  </div>
+
   <div class="continue" data-hover id="gardenContinue">continue</div>
 </div>
 
@@ -1977,13 +2180,7 @@
       <p class="signature hand"><span class="ink">happy mother's day, ammi. — tishan</span></p>
     </div>
 
-    <div class="photo-strip" id="photoStrip">
-      <img src="photo-waterfall.jpg" alt="us at the waterfall" />
-      <img src="photo-eating.jpg" alt="ammi mid-bite" />
-      <img src="photo-05.jpg" alt="ammi at the beach" />
-    </div>
-
-    <div class="actions" id="actions">
+    <div class="actions" id="actions" style="margin-top: 3rem;">
       <button class="btn primary" id="sendLoveBtn" data-hover>send love</button>
       <button class="btn ghost" id="downloadBtn" data-hover>save card</button>
     </div>
@@ -2393,13 +2590,10 @@ function initCareList() {
 
 /* Gallery */
 const GALLERY = [
-  { src: "photo-waterfall.jpg", caption: "the waterfall. one of countless places i'd follow you to." },
-  { src: "photo-02.jpg",        caption: "you in your favourite yellow. the sun had nothing on you." },
-  { src: "photo-01.jpg",        caption: "this one. red shirt. blue sky. you, beside me." },
-  { src: "photo-eating.jpg",    caption: "mid-bite. mid-laugh. perfectly you." },
-  { src: "photo-03.jpg",        caption: "by the palms. you looked like a postcard i wanted to keep." },
-  { src: "photo-04.jpg",        caption: "a quiet kind of grace. all yours." },
-  { src: "photo-05.jpg",        caption: "the sea, the laughter, the both of us alive in it." },
+  { src: "photo-02.jpg", caption: "you in your favourite yellow. the sun had nothing on you." },
+  { src: "photo-01.jpg", caption: "red shirt. blue sky. you, beside me." },
+  { src: "photo-03.jpg", caption: "by the palms. you looked like a postcard i wanted to keep." },
+  { src: "photo-05.jpg", caption: "the sea, the laughter, the both of us alive in it." },
 ];
 let galleryIdx = 0, galleryReady = false, galleryAutoTimer = null;
 function probe(src) { return new Promise(r => { const i = new Image(); i.onload = () => r(true); i.onerror = () => r(false); i.src = src; }); }
@@ -2476,6 +2670,33 @@ let plantedFlowers = [];
 let gardenInit = false;
 let gardenComplete = false;
 
+/* Pentatonic notes for the chime — ascending across the 15 plants */
+const CHIME_NOTES = [
+  523.25, 587.33, 659.25, 783.99, 880.00, // C5 D5 E5 G5 A5
+  587.33, 659.25, 783.99, 880.00, 1046.50, // D5 E5 G5 A5 C6
+  659.25, 783.99, 880.00, 1046.50, 1174.66, // E5 G5 A5 C6 D6
+];
+
+let chimeCtx = null;
+function playChime(freq, gainPeak = 0.16) {
+  try {
+    if (!chimeCtx) chimeCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = chimeCtx;
+    if (ctx.state === "suspended") ctx.resume();
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(gainPeak, t + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0008, t + 0.85);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + 0.9);
+  } catch (e) {}
+}
+
 function initGarden() {
   const soil = document.getElementById("gardenSoil");
   const counter = document.getElementById("gardenCounter");
@@ -2483,6 +2704,7 @@ function initGarden() {
   const final = document.getElementById("gardenFinal");
   const cont = document.getElementById("gardenContinue");
   const eyebrow = document.querySelector("#scene-garden .eyebrow");
+  const heartGlow = document.getElementById("gardenHeartGlow");
 
   if (!gardenInit) {
     gardenInit = true;
@@ -2498,24 +2720,29 @@ function initGarden() {
     }, { passive: true });
   }
 
-  // If the user already finished and is revisiting, just show final state
+  // If already finished, show final state
   if (gardenComplete) {
     eyebrow.classList.add("show");
     prompt.classList.add("hide");
+    counter.classList.add("fade");
+    heartGlow.classList.add("show");
     final.classList.add("show");
     cont.classList.add("show");
     return;
   }
 
-  // Reset for fresh play
+  // Reset
   plantedFlowers.forEach(f => f.el.remove());
   plantedFlowers = [];
-  soil.querySelectorAll(".garden-thanks, .garden-sparkle").forEach(el => el.remove());
+  soil.querySelectorAll(".garden-thanks, .garden-sparkle, .garden-trail").forEach(el => el.remove());
+  document.querySelectorAll("#scene-garden .butterfly-orbit, #scene-garden .rain-petal").forEach(el => el.remove());
   counter.textContent = `0 / ${TARGET_FLOWERS} planted`;
+  counter.classList.remove("fade");
   eyebrow.classList.remove("show");
   prompt.classList.remove("show", "hide");
   final.classList.remove("show");
   cont.classList.remove("show");
+  heartGlow.classList.remove("show");
 
   setTimeout(() => eyebrow.classList.add("show"), 400);
   setTimeout(() => prompt.classList.add("show"), 1100);
@@ -2528,38 +2755,42 @@ function plantFlower(x, y) {
   const idx = plantedFlowers.length;
   const color = FLOWER_COLORS[idx];
 
-  // Avoid clipping edges
-  const flowerHalf = 18;
+  const flowerHalf = 24;
   const sx = Math.max(flowerHalf, Math.min(soil.clientWidth - flowerHalf, x));
-  const sy = Math.max(56, Math.min(soil.clientHeight - 8, y));
+  const sy = Math.max(80, Math.min(soil.clientHeight - 8, y));
 
   const flower = document.createElement("div");
   flower.className = "garden-flower";
   flower.style.setProperty("--bc", color);
+  flower.style.setProperty("--sway-dur", (3 + Math.random() * 2) + "s");
   flower.style.left = sx + "px";
   flower.style.top = sy + "px";
   flower.innerHTML = `
-    <div class="stem"></div>
-    <div class="leaf left"></div>
-    <div class="leaf right"></div>
-    <div class="bloom"></div>
+    <div class="stem-wrap">
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+      <div class="bloom"></div>
+    </div>
   `;
   soil.appendChild(flower);
   plantedFlowers.push({ el: flower, x: sx, y: sy, color });
 
-  // Floating thank-you bubble
+  // Chime sound
+  playChime(CHIME_NOTES[idx]);
+
+  // Floating thank-you
   const thanks = document.createElement("div");
   thanks.className = "garden-thanks";
   thanks.textContent = GARDEN_THANKS[idx];
   thanks.style.left = sx + "px";
-  thanks.style.top = (sy - 60) + "px";
+  thanks.style.top = (sy - 80) + "px";
   soil.appendChild(thanks);
-  setTimeout(() => thanks.remove(), 3000);
+  setTimeout(() => thanks.remove(), 3200);
 
   document.getElementById("gardenCounter").textContent =
     `${plantedFlowers.length} / ${TARGET_FLOWERS} planted`;
 
-  // Hide prompt once they get going
   if (plantedFlowers.length === 4) {
     document.getElementById("gardenPrompt").classList.add("hide");
   }
@@ -2571,14 +2802,18 @@ function plantFlower(x, y) {
 
 function triggerHeartFormation() {
   gardenComplete = true;
+  const scene = document.getElementById("scene-garden");
   const soil = document.getElementById("gardenSoil");
+  const counter = document.getElementById("gardenCounter");
+  const heartGlow = document.getElementById("gardenHeartGlow");
+
+  // Compute heart targets — bigger now (fullscreen)
   const w = soil.clientWidth;
   const h = soil.clientHeight;
   const cx = w / 2;
   const cy = h * 0.55;
-  const scale = Math.min(w, h) * 0.018;
+  const scale = Math.min(w, h) * 0.026;
 
-  // Heart formation points
   const targets = [];
   const N = TARGET_FLOWERS;
   for (let i = 0; i < N; i++) {
@@ -2588,7 +2823,7 @@ function triggerHeartFormation() {
     targets.push({ x: cx + px * scale, y: cy + py * scale });
   }
 
-  // Match each planted flower to nearest unused target (greedy)
+  // Match each flower to nearest unused target
   const used = new Set();
   plantedFlowers.forEach(f => {
     let best = -1, bestD = Infinity;
@@ -2601,38 +2836,114 @@ function triggerHeartFormation() {
     f.target = targets[best];
   });
 
-  // Animate flight to formation + sparkles on landing
+  // Fade the counter
+  counter.classList.add("fade");
+
+  // Heart glow rises from behind
+  setTimeout(() => heartGlow.classList.add("show"), 100);
+
+  // Ascending arpeggio as the formation begins
+  CHIME_NOTES.slice().reverse().forEach((note, i) => {
+    setTimeout(() => playChime(note, 0.1), 400 + i * 90);
+  });
+
+  // Animate each flower to its target with a sparkle trail
   plantedFlowers.forEach((f, i) => {
     setTimeout(() => {
       f.el.classList.add("formation");
       f.el.style.left = f.target.x + "px";
       f.el.style.top  = f.target.y + "px";
-      // Sparkle on landing
-      setTimeout(() => burstSparkles(soil, f.target.x, f.target.y, f.color), 2200);
-    }, i * 60);
+      // Sparkle trail mid-flight
+      for (let j = 1; j <= 5; j++) {
+        setTimeout(() => {
+          const progress = j / 6;
+          const tx = f.x + (f.target.x - f.x) * progress;
+          const ty = f.y + (f.target.y - f.y) * progress - Math.sin(progress * Math.PI) * 30;
+          const sp = document.createElement("div");
+          sp.className = "garden-trail";
+          sp.style.left = tx + "px";
+          sp.style.top = ty + "px";
+          sp.style.background = f.color;
+          sp.style.boxShadow = `0 0 14px ${f.color}`;
+          soil.appendChild(sp);
+          setTimeout(() => sp.remove(), 1000);
+        }, j * 380);
+      }
+      // Burst on landing
+      setTimeout(() => burstSparkles(soil, f.target.x, f.target.y, f.color), 2400);
+    }, i * 70);
   });
 
-  // Reveal final caption + continue
+  // After flowers land — petal rain + butterflies + final text
+  setTimeout(() => {
+    spawnPetalRain();
+    spawnHeartButterflies();
+  }, 3000);
+
   setTimeout(() => {
     document.getElementById("gardenFinal").classList.add("show");
     document.getElementById("gardenContinue").classList.add("show");
-  }, 3400);
+  }, 3800);
 }
 
 function burstSparkles(parent, x, y, color) {
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 8; i++) {
     const s = document.createElement("div");
     s.className = "garden-sparkle";
     s.style.left = x + "px";
     s.style.top = y + "px";
-    const angle = (i / 6) * Math.PI * 2 + Math.random() * 0.5;
-    const dist = 22 + Math.random() * 18;
+    const angle = (i / 8) * Math.PI * 2 + Math.random() * 0.4;
+    const dist = 26 + Math.random() * 24;
     s.style.setProperty("--sx", Math.cos(angle) * dist + "px");
     s.style.setProperty("--sy", Math.sin(angle) * dist + "px");
     s.style.background = color;
-    s.style.boxShadow = `0 0 12px ${color}`;
+    s.style.boxShadow = `0 0 14px ${color}`;
     parent.appendChild(s);
-    setTimeout(() => s.remove(), 1500);
+    setTimeout(() => s.remove(), 1700);
+  }
+}
+
+/* Falling rain of petals across the whole screen */
+function spawnPetalRain() {
+  const COLORS = ["#ff8c6b", "#f06888", "#ffb3c1", "#ffd36b", "#f5a623", "#b8a3d4", "#ff7a5c"];
+  const scene = document.getElementById("scene-garden");
+  for (let i = 0; i < 90; i++) {
+    setTimeout(() => {
+      const p = document.createElement("div");
+      p.className = "rain-petal";
+      p.style.left = (Math.random() * 110 - 5) + "vw";
+      p.style.top = "-20px";
+      p.style.background = COLORS[(Math.random() * COLORS.length) | 0];
+      const sz = 7 + Math.random() * 9;
+      p.style.width = sz + "px";
+      p.style.height = (sz * 1.4) + "px";
+      p.style.setProperty("--drift", ((Math.random() - 0.5) * 200) + "px");
+      const dur = 5 + Math.random() * 5;
+      p.style.animationDuration = dur + "s";
+      scene.appendChild(p);
+      setTimeout(() => p.remove(), (dur + 1) * 1000);
+    }, i * 35);
+  }
+}
+
+/* Butterflies orbiting the heart formation */
+function spawnHeartButterflies() {
+  const scene = document.getElementById("scene-garden");
+  const COLORS = ["#f06888", "#ffd36b", "#ff8c6b", "#b8a3d4", "#ffb3c1"];
+  const RADII = [180, 230, 160, 270, 200];
+  for (let i = 0; i < 5; i++) {
+    setTimeout(() => {
+      const orbit = document.createElement("div");
+      orbit.className = "butterfly-orbit";
+      orbit.style.setProperty("--orbit-dur", (10 + i * 1.5) + "s");
+      orbit.style.setProperty("--orbit-start", (i * 72) + "deg");
+      const b = document.createElement("div");
+      b.className = "heart-butterfly";
+      b.style.setProperty("--bc", COLORS[i]);
+      b.style.setProperty("--orbit-r", RADII[i] + "px");
+      orbit.appendChild(b);
+      scene.appendChild(orbit);
+    }, i * 350);
   }
 }
 
@@ -2968,7 +3279,6 @@ function initLetter() {
     setTimeout(() => line.classList.add("draw"), cumulative);
     cumulative += ms + 280;
   });
-  setTimeout(() => document.getElementById("photoStrip").classList.add("show"), cumulative + 300);
   setTimeout(() => document.getElementById("actions").classList.add("show"), cumulative + 800);
   setTimeout(() => document.getElementById("signoff").classList.add("show"), cumulative + 1200);
   spawnHearts();
