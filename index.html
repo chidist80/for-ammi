@@ -816,17 +816,27 @@
     50%      { transform: translateY(-3px) rotate(-8deg) translateX(-8px); }
   }
 
-  /* Ammi — placed in biome 4 (scrolls into view) */
+  /* Ammi — sibling of the world. Scrolls in independently, so she stays above globe-trot overlays. */
   .ammi-waiting {
     position: absolute;
     bottom: 22vh;
-    left: 50vw;
+    left: 350vw;          /* off-screen right initially — matches biome-4's center when world finishes scrolling */
     width: 96px;
     height: 132px;
-    z-index: 9;
+    z-index: 11;          /* above trot overlays (z 7) */
     filter: drop-shadow(0 8px 4px rgba(58, 36, 24, 0.25));
-    animation: ammiIdle 1.4s ease-in-out infinite;
     transform-origin: 50% 100%;
+    animation: ammiIdle 1.4s ease-in-out infinite;
+  }
+  .ammi-waiting.scroll-in {
+    /* Synced to world.go: same 22s, same easing curve */
+    animation:
+      ammiScrollIn 22s cubic-bezier(.42, 0, .58, 1) forwards,
+      ammiIdle 1.4s ease-in-out infinite;
+  }
+  @keyframes ammiScrollIn {
+    from { left: 350vw; }
+    to   { left: 50vw; }
   }
   .ammi-waiting .frame {
     position: absolute;
@@ -902,55 +912,887 @@
   }
   .trot.show { opacity: 1; }
 
-  /* ----- PARIS ----- */
+  /* ============= PARIS ============= */
   .trot-paris {
     background: linear-gradient(180deg,
-      #ff6b88 0%, #ff8c6b 25%, #ffce6e 55%, #ffe1a3 80%, #fff0d6 100%);
+      #2a1850 0%, #6e3a8a 12%, #c44a8e 28%, #ff5d6e 45%,
+      #ff8c6b 60%, #ffce6e 78%, #ffe1a3 92%, #fff0d6 100%);
   }
-  .trot-paris .city-silhouette {
+  .paris-stars {
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 30%;
+    background-image:
+      radial-gradient(circle, white 1px, transparent 1.4px),
+      radial-gradient(circle, white 0.6px, transparent 1px);
+    background-size: 90px 60px, 50px 40px;
+    background-position: 12px 8px, 30px 20px;
+    opacity: 0.7;
+  }
+  .paris-moon {
+    position: absolute;
+    top: 9%;
+    left: 14%;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff8d6, #f5e6a8 70%, #d4c280 100%);
+    box-shadow: 0 0 40px rgba(255, 248, 214, 0.5), 0 0 80px rgba(255, 248, 214, 0.25);
+  }
+  .paris-balloon {
+    position: absolute;
+    top: 18%;
+    left: -10vw;
+    width: 36px;
+    height: 60px;
+    animation: balloonDrift 25s linear infinite;
+  }
+  @keyframes balloonDrift {
+    from { transform: translateX(0); }
+    to   { transform: translateX(120vw); }
+  }
+  .paris-balloon::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 36px;
+    background: var(--bc, #d96978);
+    border-radius: 50%;
+    box-shadow: inset -4px 0 0 rgba(0,0,0,0.2);
+  }
+  .paris-balloon::after {
+    content: "";
+    position: absolute;
+    top: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 8px;
+    background: #6a4838;
+    border-radius: 2px;
+  }
+  .paris-skyline {
     position: absolute;
     bottom: 18vh;
     left: 0;
     right: 0;
-    height: 12vh;
-    background:
-      linear-gradient(90deg,
-        transparent 0%, transparent 8%,
-        #2a1828 8%, #2a1828 12%, transparent 12%, transparent 16%,
-        #2a1828 16%, #2a1828 22%, transparent 22%, transparent 28%,
-        #2a1828 28%, #2a1828 34%, transparent 34%, transparent 38%,
-        #2a1828 38%, #2a1828 42%, transparent 42%, transparent 60%,
-        #2a1828 60%, #2a1828 64%, transparent 64%, transparent 70%,
-        #2a1828 70%, #2a1828 76%, transparent 76%, transparent 82%,
-        #2a1828 82%, #2a1828 88%, transparent 88%);
-    mask-image: linear-gradient(180deg, transparent 30%, black 100%);
-    opacity: 0.7;
+    height: 14vh;
+    pointer-events: none;
   }
-  .trot-paris .eiffel {
+  .paris-bldg {
+    position: absolute;
+    bottom: 0;
+    background: #1a0e22;
+    width: var(--bw, 80px);
+    height: var(--bh, 80px);
+  }
+  .paris-bldg.dome {
+    border-radius: 50% 50% 0 0 / 30% 30% 0 0;
+  }
+  .paris-bldg.spire::after {
+    content: "";
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 16px;
+    background: #1a0e22;
+  }
+  .paris-bldg .windows {
+    position: absolute;
+    inset: 30% 15% 15% 15%;
+    background-image: radial-gradient(circle, rgba(255, 217, 128, 0.85) 1px, transparent 2px);
+    background-size: 12px 14px;
+    background-position: 0 0;
+  }
+  .paris-eiffel {
     position: absolute;
     bottom: 18vh;
     left: 50%;
     transform: translateX(-50%);
-    width: 120px;
-    height: 220px;
+    width: 160px;
+    height: 280px;
+    z-index: 4;
+    filter: drop-shadow(0 0 14px rgba(255, 217, 128, 0.4));
   }
-  .trot-paris .seine {
+  .paris-lamp {
+    position: absolute;
+    bottom: 18vh;
+    width: 4px;
+    height: 24px;
+    background: #1a0e22;
+  }
+  .paris-lamp::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    background: #ffd980;
+    border-radius: 50%;
+    box-shadow: 0 0 18px #ffd980, 0 0 32px rgba(255, 217, 128, 0.5);
+    animation: lampFlicker 2.4s ease-in-out infinite;
+  }
+  @keyframes lampFlicker {
+    0%, 100% { opacity: 1; }
+    47%      { opacity: 0.85; }
+    50%      { opacity: 0.7; }
+    53%      { opacity: 0.95; }
+  }
+  .paris-seine {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
     height: 18vh;
-    background: linear-gradient(180deg, #4a3a5e 0%, #2a1c40 100%);
+    background: linear-gradient(180deg, #3a2858 0%, #2a1c40 60%, #14081e 100%);
   }
-  .trot-paris .seine::before {
+  .paris-seine::before {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 4px;
-    background: rgba(255, 220, 180, 0.4);
+    background: linear-gradient(90deg,
+      rgba(255, 217, 128, 0) 0%,
+      rgba(255, 217, 128, 0.6) 50%,
+      rgba(255, 217, 128, 0) 100%);
   }
+  .paris-seine::after {
+    content: "";
+    position: absolute;
+    top: 8px;
+    left: 0;
+    right: 0;
+    height: 60%;
+    background-image:
+      repeating-linear-gradient(90deg,
+        transparent 0,
+        transparent 40px,
+        rgba(255, 217, 128, 0.18) 40px,
+        rgba(255, 217, 128, 0.18) 44px);
+    animation: seineRipple 8s linear infinite;
+  }
+  @keyframes seineRipple {
+    from { background-position: 0 0; }
+    to   { background-position: 80px 0; }
+  }
+
+  /* ============= SKYDIVING ============= */
+  .trot-skydiving {
+    background: linear-gradient(180deg,
+      #3a8db8 0%, #6cb5e8 25%, #a8d4f0 55%, #d4ecf5 75%, #e8f0d4 90%, #c8d8a4 100%);
+  }
+  .sky-sun {
+    position: absolute;
+    top: 8%;
+    right: 12%;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffffff, #ffe080 60%, #ffb050 100%);
+    box-shadow: 0 0 60px rgba(255, 224, 128, 0.7), 0 0 120px rgba(255, 176, 80, 0.4);
+  }
+  .sky-sun::before, .sky-sun::after {
+    content: "";
+    position: absolute;
+    inset: -20px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 240, 180, 0.3) 30%, transparent 60%);
+  }
+  .trot-skydiving .speed-lines {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.6) 49.5%, rgba(255,255,255,0.6) 50.5%, transparent 51%);
+    background-size: 70px 100%;
+    animation: speedLines 0.4s linear infinite;
+    opacity: 0.55;
+  }
+  @keyframes speedLines {
+    from { background-position: 0 0; }
+    to   { background-position: -70px 0; }
+  }
+  .sky-cloud {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 50%;
+    filter: blur(1px);
+    animation: cloudPass var(--cloud-spd, 1.6s) linear infinite;
+  }
+  .sky-cloud.deep { opacity: 0.65; filter: blur(2px); }
+  @keyframes cloudPass {
+    from { transform: translateY(-30vh); }
+    to   { transform: translateY(120vh); }
+  }
+  .sky-bird {
+    position: absolute;
+    width: 12px;
+    height: 6px;
+    color: #2a1828;
+    animation: birdSoar 6s linear infinite;
+  }
+  .sky-bird::before, .sky-bird::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 5px;
+    height: 3px;
+    border: 1.5px solid currentColor;
+    border-radius: 50% 50% 0 0;
+    border-bottom: 0;
+  }
+  .sky-bird::before { left: 0; }
+  .sky-bird::after { right: 0; }
+  @keyframes birdSoar {
+    from { transform: translateX(-10vw) translateY(0); }
+    to   { transform: translateX(110vw) translateY(20px); }
+  }
+  .sky-plane {
+    position: absolute;
+    top: 22%;
+    left: -10vw;
+    width: 32px;
+    height: 12px;
+    background: #1a0e22;
+    clip-path: polygon(0% 50%, 70% 30%, 100% 30%, 100% 70%, 70% 70%);
+    animation: planeFly 18s linear infinite;
+    animation-delay: -8s;
+  }
+  .sky-plane::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 30%;
+    width: 16px;
+    height: 6px;
+    background: #1a0e22;
+    clip-path: polygon(40% 100%, 60% 100%, 100% 0%, 0% 0%);
+  }
+  .sky-plane::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 30%;
+    right: 30%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: 50px 0 0 rgba(255, 255, 255, 0.5), 100px 0 0 rgba(255, 255, 255, 0.4), 150px 0 0 rgba(255, 255, 255, 0.3);
+  }
+  @keyframes planeFly {
+    from { left: -10vw; }
+    to   { left: 110vw; }
+  }
+  .sky-ground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 14vh;
+    background: linear-gradient(180deg, #c8d8a4 0%, #8fb573 50%, #5a8243 100%);
+    overflow: hidden;
+  }
+  .sky-ground::before {
+    /* fields pattern */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, transparent 30%, rgba(106, 80, 50, 0.4) 30%, rgba(106, 80, 50, 0.4) 32%, transparent 32%),
+      linear-gradient(90deg, transparent 60%, rgba(106, 80, 50, 0.4) 60%, rgba(106, 80, 50, 0.4) 62%, transparent 62%);
+    background-size: 200px 100%;
+  }
+  .sky-river {
+    position: absolute;
+    bottom: 6vh;
+    left: -10%;
+    right: -10%;
+    height: 14px;
+    background: linear-gradient(180deg, #6cb5e8, #4a8db5);
+    clip-path: polygon(0% 50%, 100% 30%, 100% 70%, 0% 70%);
+    opacity: 0.8;
+  }
+  .sky-mountains {
+    position: absolute;
+    bottom: 14vh;
+    left: 0;
+    right: 0;
+    height: 10vh;
+  }
+  .sky-mtn {
+    position: absolute;
+    bottom: 0;
+    width: var(--mw, 25vw);
+    height: var(--mh, 8vh);
+    background: linear-gradient(180deg, #6a7c95 0%, #4a5a78 100%);
+    clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+  }
+  .sky-mtn::after {
+    /* snow cap */
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 38%;
+    right: 38%;
+    height: 30%;
+    background: white;
+    clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+    opacity: 0.85;
+  }
+  .parachute {
+    position: absolute;
+    bottom: calc(22vh + 138px);
+    width: 86px;
+    height: 56px;
+    z-index: 12;
+    animation: parachuteWave 2.4s ease-in-out infinite;
+    transform-origin: 50% 100%;
+  }
+  @keyframes parachuteWave {
+    0%, 100% { transform: rotate(-3deg); }
+    50%      { transform: rotate(3deg); }
+  }
+  .parachute.tishan-chute { left: calc(50% - 110px); }
+  .parachute.ammi-chute  { left: calc(50% + 24px); animation-delay: -1.2s; }
+  .parachute .canopy {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 38px;
+    background: var(--pc, #ff8c6b);
+    border-radius: 50% 50% 0 0;
+    box-shadow:
+      inset 0 -6px 0 rgba(0,0,0,0.18),
+      inset 8px 0 0 rgba(255,255,255,0.18);
+  }
+  .parachute .canopy::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 33%;
+    width: 1px;
+    background: rgba(0,0,0,0.25);
+    transform: rotate(-8deg);
+    transform-origin: 50% 50%;
+  }
+  .parachute .canopy::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 33%;
+    width: 1px;
+    background: rgba(0,0,0,0.25);
+    transform: rotate(8deg);
+  }
+  .parachute .strings {
+    position: absolute;
+    top: 38px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 56px;
+    height: 18px;
+    border-left: 1.5px solid rgba(58, 36, 24, 0.7);
+    border-right: 1.5px solid rgba(58, 36, 24, 0.7);
+    transform: translateX(-50%) skewX(0deg);
+  }
+
+  /* ============= ANTARCTICA ============= */
+  .trot-penguins {
+    background: linear-gradient(180deg,
+      #a8c8e0 0%, #c4dbe8 30%, #d4ebf5 60%, #f0f8fc 100%);
+  }
+  .ant-aurora {
+    /* faint aurora hint */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 30%;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 50%, rgba(120, 220, 180, 0.25), transparent 70%);
+    filter: blur(20px);
+  }
+  .ant-sun {
+    position: absolute;
+    top: 12%;
+    right: 18%;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #ffffff, #ffe8c0 60%, #ffce6e 100%);
+    box-shadow: 0 0 50px rgba(255, 232, 192, 0.7), 0 0 120px rgba(255, 206, 110, 0.4);
+  }
+  .ant-mountains {
+    position: absolute;
+    bottom: 24vh;
+    left: 0;
+    right: 0;
+    height: 14vh;
+    pointer-events: none;
+  }
+  .ant-cliff {
+    position: absolute;
+    bottom: 0;
+    background: linear-gradient(180deg, #ffffff 0%, #c4d8ec 60%, #a8c0d8 100%);
+    width: var(--cw, 35vw);
+    height: var(--ch, 12vh);
+    clip-path: polygon(0% 100%, 5% 30%, 25% 50%, 50% 0%, 75% 40%, 95% 25%, 100% 100%);
+  }
+  .ant-snow-ground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 24vh;
+    background: linear-gradient(180deg, #ffffff 0%, #e0eef5 50%, #b8d4ec 100%);
+  }
+  .ant-snow-ground::before {
+    /* small drifts */
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(180, 200, 220, 0.5) 18%,
+      transparent 40%,
+      rgba(180, 200, 220, 0.5) 65%,
+      transparent 90%);
+  }
+  .iceberg {
+    position: absolute;
+    bottom: 24vh;
+    width: var(--iw, 120px);
+    height: var(--ih, 120px);
+    background: linear-gradient(180deg, #ffffff 0%, #c4d8ed 100%);
+    clip-path: polygon(0% 100%, 30% 20%, 50% 0%, 70% 25%, 100% 100%);
+    opacity: 0.92;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+  }
+  .penguin {
+    position: absolute;
+    bottom: 24vh;
+    width: 26px;
+    height: 38px;
+    filter: drop-shadow(0 3px 0 rgba(0,0,0,0.18));
+    z-index: 8;
+  }
+  .penguin .body {
+    position: absolute;
+    inset: 0;
+    background: #1a1a1a;
+    border-radius: 50% 50% 35% 35% / 55% 55% 45% 45%;
+  }
+  .penguin .belly {
+    position: absolute;
+    inset: 7px 5px 4px;
+    background: white;
+    border-radius: 50% 50% 35% 35% / 55% 55% 45% 45%;
+  }
+  .penguin .beak {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-bottom: 4px solid #ff9000;
+  }
+  .penguin .eye-l, .penguin .eye-r {
+    position: absolute;
+    top: 7px;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+  }
+  .penguin .eye-l { left: 8px; }
+  .penguin .eye-r { right: 8px; }
+  .penguin.waddle { animation: waddle 1.6s ease-in-out infinite; }
+  @keyframes waddle {
+    0%, 100% { transform: rotate(-4deg); }
+    50%      { transform: rotate(4deg); }
+  }
+  .ant-seal {
+    position: absolute;
+    bottom: 24vh;
+    width: 40px;
+    height: 14px;
+    background: #4a4a4a;
+    border-radius: 50% 60% 40% 40% / 80% 80% 50% 50%;
+    box-shadow: inset -3px 0 0 #2a2a2a;
+  }
+  .ant-seal::before {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 5px;
+    width: 1.5px;
+    height: 1.5px;
+    background: white;
+    border-radius: 50%;
+  }
+  .snowflake {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    animation: snowFall var(--snow-dur, 6s) linear infinite;
+    opacity: 0.85;
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+  }
+  @keyframes snowFall {
+    from { transform: translateY(-10vh); }
+    to   { transform: translateY(110vh); }
+  }
+
+  /* ============= AURORA / NORTHERN LIGHTS ============= */
+  .trot-aurora {
+    background: linear-gradient(180deg,
+      #050a30 0%, #0a1340 25%, #1a1d50 50%, #2a2865 75%, #3a3a78 100%);
+  }
+  .aur-stars {
+    position: absolute;
+    inset: 0 0 50% 0;
+    background-image:
+      radial-gradient(circle, white 1.2px, transparent 1.8px),
+      radial-gradient(circle, white 0.6px, transparent 1px),
+      radial-gradient(circle, white 0.4px, transparent 0.6px);
+    background-size: 110px 90px, 60px 50px, 35px 30px;
+    background-position: 10px 13px, 30px 40px, 5px 22px;
+    opacity: 0.85;
+  }
+  .aur-shooting {
+    position: absolute;
+    top: 18%;
+    width: 60px;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, white);
+    transform: rotate(-25deg);
+    opacity: 0;
+    animation: shootingStar 6s ease-in-out infinite;
+    animation-delay: -2s;
+  }
+  @keyframes shootingStar {
+    0%   { opacity: 0; left: 70%; transform: rotate(-25deg) translateX(0); }
+    10%  { opacity: 1; }
+    30%  { opacity: 0; left: 30%; transform: rotate(-25deg) translateX(-200px); }
+    100% { opacity: 0; }
+  }
+  .aur-band {
+    position: absolute;
+    top: 0;
+    left: -10%;
+    width: 120%;
+    height: 65%;
+    background:
+      radial-gradient(ellipse 65% 35% at 25% 35%, rgba(0, 255, 170, 0.55), transparent 70%),
+      radial-gradient(ellipse 55% 28% at 65% 50%, rgba(180, 60, 255, 0.45), transparent 70%),
+      radial-gradient(ellipse 45% 22% at 50% 25%, rgba(120, 200, 255, 0.4), transparent 70%);
+    filter: blur(14px);
+    animation: auroraShift 8s ease-in-out infinite alternate;
+  }
+  .aur-band.b2 {
+    animation-duration: 11s;
+    animation-delay: -3s;
+    background:
+      radial-gradient(ellipse 50% 25% at 80% 30%, rgba(255, 100, 200, 0.35), transparent 70%),
+      radial-gradient(ellipse 60% 30% at 30% 60%, rgba(0, 200, 255, 0.4), transparent 70%);
+    opacity: 0.75;
+  }
+  @keyframes auroraShift {
+    0%   { transform: translateX(-30px) translateY(-8px); }
+    100% { transform: translateX(30px)  translateY(8px); }
+  }
+  .aur-mtn {
+    position: absolute;
+    bottom: 22vh;
+    width: var(--mw, 45vw);
+    height: var(--mh, 18vh);
+    background: linear-gradient(180deg, #2a3050 0%, #1a2040 100%);
+    clip-path: polygon(0% 100%, 35% 35%, 50% 5%, 65% 30%, 100% 100%);
+  }
+  .aur-mtn::after {
+    /* snow cap */
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 35%;
+    right: 35%;
+    height: 35%;
+    background: linear-gradient(180deg, white 0%, #d4e8f5 100%);
+    clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+    opacity: 0.95;
+  }
+  .aur-lake {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 22vh;
+    background: linear-gradient(180deg,
+      #1a2848 0%,
+      rgba(0, 255, 170, 0.18) 8%,
+      rgba(180, 60, 255, 0.15) 18%,
+      #1a2040 40%,
+      #0a0d24 100%);
+  }
+  .aur-lake::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  }
+  .aur-pine {
+    position: absolute;
+    bottom: 22vh;
+    width: 0;
+    height: 0;
+    border-left: var(--pw, 14px) solid transparent;
+    border-right: var(--pw, 14px) solid transparent;
+    border-bottom: var(--ph, 50px) solid #0a1f1c;
+    filter: drop-shadow(0 0 6px rgba(0, 255, 170, 0.2));
+  }
+  .aur-pine::before {
+    /* trunk */
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 8px;
+    background: #1a0e1c;
+  }
+  .aur-moon {
+    position: absolute;
+    top: 8%;
+    right: 16%;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffffff, #e8e8f0 60%, #b8b8d0 100%);
+    box-shadow: 0 0 40px rgba(232, 232, 240, 0.5);
+  }
+
+  /* ============= TOKYO / CHERRY BLOSSOMS ============= */
+  .trot-tokyo {
+    background: linear-gradient(180deg,
+      #f9b5c8 0%, #ffc5d8 25%, #ffd8d8 45%, #ffe0c8 65%, #fff0d8 85%, #fde8d4 100%);
+  }
+  .tk-fuji {
+    position: absolute;
+    bottom: 22vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70vw;
+    max-width: 600px;
+    height: 28vh;
+    background: linear-gradient(180deg, #6a8cc4 0%, #4a6fa8 60%, #3a5a90 100%);
+    clip-path: polygon(0% 100%, 35% 30%, 50% 0%, 65% 30%, 100% 100%);
+    opacity: 0.5;
+  }
+  .tk-fuji::after {
+    /* snow cap */
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 36%;
+    right: 36%;
+    height: 35%;
+    background: linear-gradient(180deg, white 0%, #f4d4dc 100%);
+    clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+  }
+  .tk-cherry-tree {
+    position: absolute;
+    bottom: 22vh;
+    width: var(--tcw, 80px);
+    height: var(--tch, 110px);
+  }
+  .tk-cherry-tree .trunk {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 35%;
+    background: #4a2818;
+  }
+  .tk-cherry-tree .canopy {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70%;
+    background: var(--canopy, #ffb3c1);
+    border-radius: 50%;
+    box-shadow:
+      inset -8px -8px 0 #f06888,
+      inset 8px 8px 0 #ffd6e0,
+      0 0 0 2px #d96978;
+  }
+  .tk-pagoda {
+    position: absolute;
+    bottom: 22vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    height: 220px;
+    z-index: 4;
+  }
+  .tk-ground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 22vh;
+    background: linear-gradient(180deg, #f4cbd4 0%, #e8a8b8 60%, #d488a0 100%);
+  }
+  .tk-ground::before {
+    /* path */
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    right: 25%;
+    height: 30%;
+    background: linear-gradient(180deg, #d4a8b8 0%, #c08898 100%);
+    clip-path: polygon(20% 100%, 80% 100%, 100% 0%, 0% 0%);
+    opacity: 0.7;
+  }
+  .tk-petal {
+    position: absolute;
+    width: var(--ps, 9px);
+    height: calc(var(--ps, 9px) * 1.2);
+    background: var(--pc, #ffb3c1);
+    border-radius: 50% 50% 20% 20%;
+    animation: blossomFall var(--td, 7s) linear infinite;
+    opacity: 0.85;
+  }
+  @keyframes blossomFall {
+    0%   { transform: translateY(-10vh) rotate(0deg); }
+    100% { transform: translateY(110vh) rotate(540deg); }
+  }
+  .tk-lantern-string {
+    position: absolute;
+    top: 12%;
+    left: 0;
+    right: 0;
+    height: 80px;
+    pointer-events: none;
+  }
+  .tk-lantern-string::before {
+    /* the string */
+    content: "";
+    position: absolute;
+    top: 8px;
+    left: 5%;
+    right: 5%;
+    height: 2px;
+    background: #2a1828;
+    border-radius: 2px;
+  }
+  .tk-lantern {
+    position: absolute;
+    top: 14px;
+    width: 16px;
+    height: 22px;
+    background: var(--lc, #c43838);
+    border-radius: 8px;
+    box-shadow:
+      inset 0 -3px 0 rgba(0,0,0,0.3),
+      inset -3px 0 0 rgba(0,0,0,0.2),
+      0 0 14px rgba(255, 200, 100, 0.6);
+    animation: lanternSway var(--lsd, 3s) ease-in-out infinite alternate;
+    transform-origin: 50% -8px;
+  }
+  @keyframes lanternSway {
+    from { transform: rotate(-4deg); }
+    to   { transform: rotate(4deg); }
+  }
+  .tk-lantern::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 8px;
+    background: #2a1828;
+  }
+  .tk-torii {
+    position: absolute;
+    bottom: 22vh;
+    width: 72px;
+    height: 90px;
+    z-index: 3;
+  }
+  .tk-torii::before {
+    /* main horizontal beam */
+    content: "";
+    position: absolute;
+    top: 12px;
+    left: -6px;
+    right: -6px;
+    height: 8px;
+    background: #c43838;
+    border-radius: 2px;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.3);
+  }
+  .tk-torii::after {
+    /* lower beam */
+    content: "";
+    position: absolute;
+    top: 28px;
+    left: 6px;
+    right: 6px;
+    height: 4px;
+    background: #c43838;
+  }
+  .tk-torii .pillar-l, .tk-torii .pillar-r {
+    position: absolute;
+    bottom: 0;
+    width: 8px;
+    height: 100%;
+    background: #c43838;
+    box-shadow: inset -2px 0 0 rgba(0,0,0,0.3);
+  }
+  .tk-torii .pillar-l { left: 12px; }
+  .tk-torii .pillar-r { right: 12px; }
+
+  /* ============= per-scene character poses ============= */
+  body.in-skydiving .walker { animation: freefallTishan 0.6s ease-in-out infinite; }
+  body.in-skydiving .ammi-waiting { animation: freefallAmmi 0.6s ease-in-out infinite, ammiIdle 1.4s ease-in-out infinite; }
+  @keyframes freefallTishan {
+    0%, 100% { transform: translateY(-2px) rotate(-4deg); }
+    50%      { transform: translateY(2px)  rotate(4deg); }
+  }
+  @keyframes freefallAmmi {
+    0%, 100% { transform: translateY(-2px) rotate(4deg); }
+    50%      { transform: translateY(2px)  rotate(-4deg); }
+  }
+  body.in-aurora .walker, body.in-aurora .ammi-waiting {
+    filter: drop-shadow(0 8px 4px rgba(0,0,0,0.4)) brightness(0.9) drop-shadow(0 0 8px rgba(0, 255, 170, 0.3));
+  }
+  body.in-tokyo .walker { animation: walkerLean 1s ease-in-out infinite; }
+  body.in-tokyo .ammi-waiting { animation: ammiHug 1s ease-in-out infinite, ammiIdle 1.4s ease-in-out infinite; }
 
   /* ----- SKYDIVING ----- */
   .trot-skydiving {
@@ -2450,11 +3292,6 @@
 
       <div class="b-bigtree"></div>
 
-      <div class="ammi-waiting" id="walkAmmi">
-        <div class="frame a" id="walkAmmiA"></div>
-        <div class="frame b" id="walkAmmiB"></div>
-      </div>
-
       <div class="b-flower" style="--fc:#f06888; left:22vw;"></div>
       <div class="b-flower" style="--fc:#ff8c6b; left:30vw;"></div>
       <div class="b-flower" style="--fc:#ffd36b; left:38vw;"></div>
@@ -2467,6 +3304,12 @@
     </div>
   </div>
 
+  <!-- Ammi — sibling of the world, scrolls in via her own animation so she stays above trot overlays -->
+  <div class="ammi-waiting" id="walkAmmi">
+    <div class="frame a" id="walkAmmiA"></div>
+    <div class="frame b" id="walkAmmiB"></div>
+  </div>
+
   <!-- Tishan walks in the foreground, fixed in viewport -->
   <div class="walker walk-bob" id="walkTishan">
     <div class="frame a" id="walkTishanA"></div>
@@ -2476,32 +3319,92 @@
   <!-- ===== GLOBE-TROT OVERLAY ===== -->
   <div class="globe-trot-overlay" id="globeTrot">
 
-    <!-- PARIS -->
+    <!-- =========== PARIS =========== -->
     <div class="trot trot-paris" id="trotParis">
-      <div class="city-silhouette"></div>
-      <svg class="eiffel" viewBox="0 0 100 220" xmlns="http://www.w3.org/2000/svg">
-        <g fill="#2a1828">
-          <polygon points="15,220 32,220 49,90 51,90"/>
-          <polygon points="85,220 68,220 51,90 49,90"/>
-          <rect x="28" y="172" width="44" height="3"/>
-          <rect x="34" y="135" width="32" height="2"/>
-          <rect x="40" y="100" width="20" height="2"/>
-          <rect x="44" y="60" width="12" height="40"/>
-          <polygon points="42,60 58,60 50,28"/>
-          <rect x="49" y="6" width="2" height="22"/>
-          <line x1="20" y1="220" x2="32" y2="220" stroke="#2a1828" stroke-width="2"/>
+      <div class="paris-stars"></div>
+      <div class="paris-moon"></div>
+      <div class="paris-balloon" style="--bc:#d96978;"></div>
+      <div class="paris-balloon" style="--bc:#ffd36b; top:26%; animation-delay:-12s; animation-duration:30s;"></div>
+
+      <!-- Skyline silhouettes -->
+      <div class="paris-skyline">
+        <div class="paris-bldg" style="--bw:60px; --bh:80px; left:4%;"><div class="windows"></div></div>
+        <div class="paris-bldg dome" style="--bw:90px; --bh:110px; left:13%;"><div class="windows"></div></div>
+        <div class="paris-bldg" style="--bw:70px; --bh:70px; left:24%;"><div class="windows"></div></div>
+        <div class="paris-bldg spire" style="--bw:50px; --bh:90px; left:32%;"></div>
+        <div class="paris-bldg" style="--bw:80px; --bh:75px; left:65%;"><div class="windows"></div></div>
+        <div class="paris-bldg dome" style="--bw:70px; --bh:90px; left:75%;"><div class="windows"></div></div>
+        <div class="paris-bldg" style="--bw:90px; --bh:70px; left:84%;"><div class="windows"></div></div>
+      </div>
+
+      <!-- Eiffel Tower (taller, more detailed) -->
+      <svg class="paris-eiffel" viewBox="0 0 80 280" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#1a0e22">
+          <!-- Splayed legs -->
+          <polygon points="6,280 22,280 38,120 42,120"/>
+          <polygon points="74,280 58,280 42,120 38,120"/>
+          <!-- Lower platform -->
+          <rect x="14" y="232" width="52" height="3"/>
+          <rect x="20" y="220" width="40" height="2"/>
+          <!-- First crossbeams -->
+          <rect x="22" y="190" width="36" height="2"/>
+          <rect x="26" y="158" width="28" height="2"/>
+          <!-- Mid platform -->
+          <rect x="30" y="130" width="20" height="2"/>
+          <rect x="32" y="120" width="16" height="3"/>
+          <!-- Middle column -->
+          <rect x="34" y="80" width="12" height="40"/>
+          <rect x="32" y="80" width="16" height="2"/>
+          <rect x="36" y="60" width="8" height="20"/>
+          <rect x="34" y="60" width="12" height="2"/>
+          <!-- Top -->
+          <polygon points="34,60 46,60 40,28"/>
+          <rect x="39" y="6" width="2" height="22"/>
+          <rect x="38" y="0" width="4" height="6"/>
         </g>
       </svg>
-      <div class="seine"></div>
+
+      <!-- Glowing street lamps along the bank -->
+      <div class="paris-lamp" style="left:15%;"></div>
+      <div class="paris-lamp" style="left:25%;"></div>
+      <div class="paris-lamp" style="left:75%;"></div>
+      <div class="paris-lamp" style="left:85%;"></div>
+
+      <!-- The Seine with shimmer -->
+      <div class="paris-seine"></div>
     </div>
 
-    <!-- SKYDIVING -->
+    <!-- =========== SKYDIVING =========== -->
     <div class="trot trot-skydiving" id="trotSkydiving">
+      <!-- Sun and clouds (parallax depth) -->
+      <div class="sky-sun"></div>
       <div class="speed-lines"></div>
-      <div class="sky-cloud" style="top:0; left:10%; width:80px; height:24px; animation-delay:-0.3s;"></div>
-      <div class="sky-cloud" style="top:0; left:65%; width:120px; height:32px; animation-delay:-0.8s;"></div>
-      <div class="sky-cloud" style="top:0; left:30%; width:60px; height:18px; animation-delay:-1.1s;"></div>
-      <div class="sky-cloud" style="top:0; left:80%; width:90px; height:26px; animation-delay:-0.5s;"></div>
+      <div class="sky-cloud deep" style="top:0; left:8%;  width:120px; height:32px; --cloud-spd:2.4s; animation-delay:-0.3s;"></div>
+      <div class="sky-cloud deep" style="top:0; left:60%; width:160px; height:38px; --cloud-spd:2.8s; animation-delay:-1.5s;"></div>
+      <div class="sky-cloud" style="top:0; left:20%; width:90px;  height:28px; --cloud-spd:1.6s; animation-delay:-0.8s;"></div>
+      <div class="sky-cloud" style="top:0; left:75%; width:110px; height:30px; --cloud-spd:1.8s; animation-delay:-0.2s;"></div>
+      <div class="sky-cloud" style="top:0; left:40%; width:70px;  height:22px; --cloud-spd:1.4s; animation-delay:-1.1s;"></div>
+      <div class="sky-cloud" style="top:0; left:88%; width:80px;  height:24px; --cloud-spd:1.5s; animation-delay:-0.7s;"></div>
+
+      <!-- Tiny plane drifting in the distance -->
+      <div class="sky-plane"></div>
+
+      <!-- Flock of birds far below -->
+      <div class="sky-bird" style="top:55%; animation-delay:-2s; animation-duration:8s;"></div>
+      <div class="sky-bird" style="top:58%; animation-delay:-4s; animation-duration:7s;"></div>
+      <div class="sky-bird" style="top:53%; animation-delay:-6s; animation-duration:9s;"></div>
+
+      <!-- Distant mountains and ground far below -->
+      <div class="sky-mountains">
+        <div class="sky-mtn" style="--mw:30vw; --mh:8vh; left:-3vw;"></div>
+        <div class="sky-mtn" style="--mw:34vw; --mh:10vh; left:22vw;"></div>
+        <div class="sky-mtn" style="--mw:30vw; --mh:9vh; left:50vw;"></div>
+        <div class="sky-mtn" style="--mw:34vw; --mh:8vh; left:74vw;"></div>
+      </div>
+      <div class="sky-river"></div>
+      <div class="sky-ground"></div>
+
+      <!-- Parachutes above the dancers -->
       <div class="parachute tishan-chute" style="--pc:#ff8c6b;">
         <div class="canopy"></div>
         <div class="strings"></div>
@@ -2512,72 +3415,173 @@
       </div>
     </div>
 
-    <!-- ANTARCTICA -->
+    <!-- =========== ANTARCTICA =========== -->
     <div class="trot trot-penguins" id="trotPenguins">
-      <div class="snow-ground"></div>
-      <div class="iceberg" style="--iw:140px; --ih:140px; left:8%;"></div>
-      <div class="iceberg" style="--iw:90px;  --ih:80px;  left:78%;"></div>
-      <div class="iceberg" style="--iw:60px;  --ih:50px;  left:60%;"></div>
-      <div class="penguin waddle" style="left: calc(50% - 130px);">
+      <div class="ant-aurora"></div>
+      <div class="ant-sun"></div>
+
+      <!-- Distant ice cliffs -->
+      <div class="ant-mountains">
+        <div class="ant-cliff" style="--cw:38vw; --ch:11vh; left:-4vw;"></div>
+        <div class="ant-cliff" style="--cw:34vw; --ch:9vh;  left:32vw;"></div>
+        <div class="ant-cliff" style="--cw:36vw; --ch:10vh; left:64vw;"></div>
+      </div>
+
+      <!-- Snow ground -->
+      <div class="ant-snow-ground"></div>
+
+      <!-- Foreground icebergs -->
+      <div class="iceberg" style="--iw:160px; --ih:140px; left:6%;"></div>
+      <div class="iceberg" style="--iw:120px; --ih:110px; left:78%;"></div>
+      <div class="iceberg" style="--iw:80px;  --ih:70px;  left:62%;"></div>
+      <div class="iceberg" style="--iw:90px;  --ih:80px;  left:22%;"></div>
+
+      <!-- Lots of penguins -->
+      <div class="penguin waddle" style="left: calc(50% - 180px);">
         <div class="body"></div><div class="belly"></div><div class="beak"></div>
         <div class="eye-l"></div><div class="eye-r"></div>
       </div>
-      <div class="penguin waddle" style="left: calc(50% - 95px); animation-delay: -0.4s;">
+      <div class="penguin waddle" style="left: calc(50% - 145px); animation-delay: -0.3s;">
         <div class="body"></div><div class="belly"></div><div class="beak"></div>
         <div class="eye-l"></div><div class="eye-r"></div>
       </div>
-      <div class="penguin waddle" style="left: calc(50% + 80px); animation-delay: -0.8s;">
+      <div class="penguin waddle" style="left: calc(50% - 110px); animation-delay: -0.6s; transform: scale(0.85);">
         <div class="body"></div><div class="belly"></div><div class="beak"></div>
         <div class="eye-l"></div><div class="eye-r"></div>
       </div>
-      <div class="penguin waddle" style="left: calc(50% + 110px); animation-delay: -1.2s;">
+      <div class="penguin waddle" style="left: calc(50% + 90px); animation-delay: -0.9s;">
         <div class="body"></div><div class="belly"></div><div class="beak"></div>
         <div class="eye-l"></div><div class="eye-r"></div>
       </div>
-      <div class="snowflake" style="left:15%;  --snow-dur:7s; animation-delay:-1s;"></div>
-      <div class="snowflake" style="left:35%;  --snow-dur:9s; animation-delay:-3s;"></div>
-      <div class="snowflake" style="left:55%;  --snow-dur:8s; animation-delay:-2s;"></div>
-      <div class="snowflake" style="left:75%;  --snow-dur:6s; animation-delay:-4s;"></div>
-      <div class="snowflake" style="left:90%;  --snow-dur:7.5s; animation-delay:-1.5s;"></div>
+      <div class="penguin waddle" style="left: calc(50% + 122px); animation-delay: -1.2s;">
+        <div class="body"></div><div class="belly"></div><div class="beak"></div>
+        <div class="eye-l"></div><div class="eye-r"></div>
+      </div>
+      <div class="penguin waddle" style="left: calc(50% + 155px); animation-delay: -1.5s; transform: scale(0.9);">
+        <div class="body"></div><div class="belly"></div><div class="beak"></div>
+        <div class="eye-l"></div><div class="eye-r"></div>
+      </div>
+      <div class="penguin waddle" style="left:14%;  animation-delay: -1.8s; transform: scale(0.75);">
+        <div class="body"></div><div class="belly"></div><div class="beak"></div>
+        <div class="eye-l"></div><div class="eye-r"></div>
+      </div>
+      <div class="penguin waddle" style="left:88%;  animation-delay: -1.1s; transform: scale(0.8);">
+        <div class="body"></div><div class="belly"></div><div class="beak"></div>
+        <div class="eye-l"></div><div class="eye-r"></div>
+      </div>
+
+      <!-- A friendly seal -->
+      <div class="ant-seal" style="left:42%;"></div>
+
+      <!-- Snowfall -->
+      <div class="snowflake" style="left:8%;  --snow-dur:7s;   animation-delay:-1s;"></div>
+      <div class="snowflake" style="left:18%; --snow-dur:9s;   animation-delay:-3s;"></div>
+      <div class="snowflake" style="left:28%; --snow-dur:8s;   animation-delay:-2s;"></div>
+      <div class="snowflake" style="left:38%; --snow-dur:6s;   animation-delay:-4s;"></div>
+      <div class="snowflake" style="left:48%; --snow-dur:7.5s; animation-delay:-1.5s;"></div>
+      <div class="snowflake" style="left:58%; --snow-dur:8.5s; animation-delay:-2.5s;"></div>
+      <div class="snowflake" style="left:68%; --snow-dur:6.5s; animation-delay:-3.5s;"></div>
+      <div class="snowflake" style="left:78%; --snow-dur:7s;   animation-delay:-0.5s;"></div>
+      <div class="snowflake" style="left:88%; --snow-dur:8s;   animation-delay:-4.5s;"></div>
+      <div class="snowflake" style="left:95%; --snow-dur:9s;   animation-delay:-2.2s;"></div>
     </div>
 
-    <!-- AURORA -->
+    <!-- =========== AURORA =========== -->
     <div class="trot trot-aurora" id="trotAurora">
-      <div class="aurora-stars"></div>
-      <div class="aurora-band"></div>
-      <div class="aurora-snow"></div>
-      <div class="aurora-pine" style="--pw:14px; --ph:50px; left: 8%;"></div>
-      <div class="aurora-pine" style="--pw:18px; --ph:64px; left: 18%;"></div>
-      <div class="aurora-pine" style="--pw:12px; --ph:42px; left: 28%;"></div>
-      <div class="aurora-pine" style="--pw:16px; --ph:58px; left: 78%;"></div>
-      <div class="aurora-pine" style="--pw:14px; --ph:48px; left: 88%;"></div>
+      <div class="aur-stars"></div>
+      <div class="aur-moon"></div>
+      <div class="aur-shooting"></div>
+      <div class="aur-band"></div>
+      <div class="aur-band b2"></div>
+
+      <!-- Snow-capped mountain range behind -->
+      <div class="aur-mtn" style="--mw:55vw; --mh:24vh; left:-10vw;"></div>
+      <div class="aur-mtn" style="--mw:50vw; --mh:20vh; left:30vw;"></div>
+      <div class="aur-mtn" style="--mw:45vw; --mh:22vh; left:65vw;"></div>
+
+      <!-- Frozen lake reflecting the aurora -->
+      <div class="aur-lake"></div>
+
+      <!-- Pine forest in the foreground -->
+      <div class="aur-pine" style="--pw:14px; --ph:52px; left: 4%;"></div>
+      <div class="aur-pine" style="--pw:18px; --ph:68px; left: 12%;"></div>
+      <div class="aur-pine" style="--pw:14px; --ph:48px; left: 20%;"></div>
+      <div class="aur-pine" style="--pw:20px; --ph:75px; left: 28%;"></div>
+      <div class="aur-pine" style="--pw:12px; --ph:42px; left: 36%;"></div>
+      <div class="aur-pine" style="--pw:16px; --ph:60px; left: 70%;"></div>
+      <div class="aur-pine" style="--pw:14px; --ph:50px; left: 78%;"></div>
+      <div class="aur-pine" style="--pw:18px; --ph:65px; left: 86%;"></div>
+      <div class="aur-pine" style="--pw:14px; --ph:48px; left: 94%;"></div>
     </div>
 
-    <!-- TOKYO / CHERRY BLOSSOMS -->
+    <!-- =========== TOKYO =========== -->
     <div class="trot trot-tokyo" id="trotTokyo">
-      <svg class="pagoda" viewBox="0 0 110 180" xmlns="http://www.w3.org/2000/svg">
+      <!-- Mt. Fuji in the distance -->
+      <div class="tk-fuji"></div>
+
+      <!-- Lantern string across the top -->
+      <div class="tk-lantern-string">
+        <div class="tk-lantern" style="left:8%;  --lc:#c43838; --lsd:3.2s;"></div>
+        <div class="tk-lantern" style="left:20%; --lc:#e85050; --lsd:2.8s;"></div>
+        <div class="tk-lantern" style="left:32%; --lc:#c43838; --lsd:3.5s;"></div>
+        <div class="tk-lantern" style="left:44%; --lc:#e85050; --lsd:3s;"></div>
+        <div class="tk-lantern" style="left:56%; --lc:#c43838; --lsd:3.4s;"></div>
+        <div class="tk-lantern" style="left:68%; --lc:#e85050; --lsd:2.9s;"></div>
+        <div class="tk-lantern" style="left:80%; --lc:#c43838; --lsd:3.1s;"></div>
+        <div class="tk-lantern" style="left:92%; --lc:#e85050; --lsd:3.3s;"></div>
+      </div>
+
+      <!-- Cherry blossom trees flanking -->
+      <div class="tk-cherry-tree" style="--tcw:90px; --tch:130px; left:4%;">
+        <div class="canopy" style="--canopy:#ffb3c1;"></div><div class="trunk"></div>
+      </div>
+      <div class="tk-cherry-tree" style="--tcw:70px; --tch:100px; left:18%;">
+        <div class="canopy" style="--canopy:#f06888;"></div><div class="trunk"></div>
+      </div>
+      <div class="tk-cherry-tree" style="--tcw:80px; --tch:115px; left:78%;">
+        <div class="canopy" style="--canopy:#ffd6e0;"></div><div class="trunk"></div>
+      </div>
+      <div class="tk-cherry-tree" style="--tcw:90px; --tch:135px; left:90%;">
+        <div class="canopy" style="--canopy:#ffb3c1;"></div><div class="trunk"></div>
+      </div>
+
+      <!-- Torii gate -->
+      <div class="tk-torii" style="left:30%;">
+        <div class="pillar-l"></div><div class="pillar-r"></div>
+      </div>
+
+      <!-- Pagoda center -->
+      <svg class="tk-pagoda" viewBox="0 0 130 220" xmlns="http://www.w3.org/2000/svg">
         <g fill="#5a2c5e">
-          <rect x="44" y="120" width="22" height="60"/>
-          <polygon points="14,120 96,120 84,98 26,98"/>
-          <rect x="49" y="80" width="12" height="18"/>
-          <polygon points="22,80 88,80 76,60 34,60"/>
-          <rect x="49" y="46" width="12" height="14"/>
-          <polygon points="28,46 82,46 70,28 40,28"/>
-          <rect x="51" y="6" width="8" height="22"/>
-          <rect x="54" y="0" width="2" height="6"/>
+          <rect x="50" y="160" width="30" height="60"/>
+          <polygon points="10,160 120,160 105,134 25,134"/>
+          <rect x="55" y="118" width="20" height="16"/>
+          <polygon points="22,118 108,118 92,92 38,92"/>
+          <rect x="58" y="74" width="14" height="18"/>
+          <polygon points="32,74 98,74 84,52 46,52"/>
+          <rect x="60" y="32" width="10" height="20"/>
+          <polygon points="40,32 90,32 78,16 52,16"/>
+          <rect x="63" y="0" width="4" height="16"/>
+          <circle cx="65" cy="2" r="3" fill="#ffd980"/>
         </g>
       </svg>
-      <div class="ground"></div>
-      <div class="tokyo-lantern" style="left:18%; top:40%;"></div>
-      <div class="tokyo-lantern" style="right:18%; top:38%;"></div>
-      <div class="tokyo-petal" style="left:10%;  --pc:#ffb3c1; --td:7s;  animation-delay:-1s;"></div>
-      <div class="tokyo-petal" style="left:25%;  --pc:#f06888; --td:8s;  animation-delay:-3s;"></div>
-      <div class="tokyo-petal" style="left:40%;  --pc:#ffd6e0; --td:6s;  animation-delay:-2s;"></div>
-      <div class="tokyo-petal" style="left:55%;  --pc:#ffb3c1; --td:9s;  animation-delay:-4s;"></div>
-      <div class="tokyo-petal" style="left:70%;  --pc:#f06888; --td:7.5s;animation-delay:-2.5s;"></div>
-      <div class="tokyo-petal" style="left:85%;  --pc:#ffd6e0; --td:8s;  animation-delay:-3.5s;"></div>
-      <div class="tokyo-petal" style="left:18%;  --pc:#ff8c6b; --td:8s;  animation-delay:-5s;"></div>
-      <div class="tokyo-petal" style="left:62%;  --pc:#ff8c6b; --td:6.5s;animation-delay:-4.5s;"></div>
+
+      <!-- Ground with path -->
+      <div class="tk-ground"></div>
+
+      <!-- Falling petals -->
+      <div class="tk-petal" style="left:5%;  --pc:#ffb3c1; --ps:9px;  --td:7s;   animation-delay:-1s;"></div>
+      <div class="tk-petal" style="left:14%; --pc:#f06888; --ps:11px; --td:8s;   animation-delay:-3s;"></div>
+      <div class="tk-petal" style="left:22%; --pc:#ffd6e0; --ps:8px;  --td:6s;   animation-delay:-2s;"></div>
+      <div class="tk-petal" style="left:30%; --pc:#ffb3c1; --ps:10px; --td:9s;   animation-delay:-4s;"></div>
+      <div class="tk-petal" style="left:38%; --pc:#f06888; --ps:9px;  --td:7.5s; animation-delay:-2.5s;"></div>
+      <div class="tk-petal" style="left:46%; --pc:#ffd6e0; --ps:8px;  --td:8s;   animation-delay:-3.5s;"></div>
+      <div class="tk-petal" style="left:54%; --pc:#ff8c6b; --ps:10px; --td:6.5s; animation-delay:-4.5s;"></div>
+      <div class="tk-petal" style="left:62%; --pc:#ffb3c1; --ps:9px;  --td:8.5s; animation-delay:-1.5s;"></div>
+      <div class="tk-petal" style="left:70%; --pc:#f06888; --ps:11px; --td:7s;   animation-delay:-3.2s;"></div>
+      <div class="tk-petal" style="left:78%; --pc:#ffd6e0; --ps:8px;  --td:9s;   animation-delay:-5s;"></div>
+      <div class="tk-petal" style="left:86%; --pc:#ffb3c1; --ps:10px; --td:7.5s; animation-delay:-2.8s;"></div>
+      <div class="tk-petal" style="left:94%; --pc:#ff8c6b; --ps:9px;  --td:8s;   animation-delay:-4.2s;"></div>
     </div>
 
   </div>
@@ -3448,15 +4452,18 @@ function initWalk() {
   walker.classList.add("walk-bob");
   ammi.classList.remove("met", "dancing");
   dusk.classList.remove("show");
-  document.querySelectorAll(".dance-star, .dance-sparkle, .trot.show").forEach(el => el.classList ? el.classList.remove("show", "dance-star", "dance-sparkle") : null);
-  // Properly remove dance leftovers (which are full elements) and hide trots
+  ["in-paris", "in-skydiving", "in-penguins", "in-aurora", "in-tokyo"].forEach(c =>
+    document.body.classList.remove(c)
+  );
   document.querySelectorAll(".dance-star, .dance-sparkle").forEach(el => el.remove());
   document.querySelectorAll(".trot").forEach(el => el.classList.remove("show"));
 
-  // Restart world scroll
+  // Restart world scroll + Ammi's matching scroll-in
   world.classList.remove("go");
+  ammi.classList.remove("scroll-in");
   void world.offsetWidth;
   world.classList.add("go");
+  ammi.classList.add("scroll-in");
 
   // Eyebrow
   wt(() => eyebrow.classList.add("show"), 600);
@@ -3475,38 +4482,41 @@ function initWalk() {
   wt(() => setCaption("you. always you."), 22500);
 
   // ===== ACT II: globetrotting montage =====
-  // 5 destinations, 4.2s each → 21s of globe-trot
+  // 5 destinations, 4.6s each → 23s of globe-trot
   const TROTS = [
-    { id: "trotParis",     caption: "we'd see paris."         },
-    { id: "trotSkydiving", caption: "fall from the sky."      },
-    { id: "trotPenguins",  caption: "say hi to the penguins." },
-    { id: "trotAurora",    caption: "chase the lights."       },
-    { id: "trotTokyo",     caption: "dance under the blossoms." },
+    { id: "trotParis",     bodyClass: "in-paris",     caption: "we'd see paris." },
+    { id: "trotSkydiving", bodyClass: "in-skydiving", caption: "leap from the sky." },
+    { id: "trotPenguins",  bodyClass: "in-penguins",  caption: "say hi to the penguins." },
+    { id: "trotAurora",    bodyClass: "in-aurora",    caption: "chase the lights." },
+    { id: "trotTokyo",     bodyClass: "in-tokyo",     caption: "dance under the blossoms." },
   ];
-  const TROT_DUR = 4200; // ms per destination
+  const TROT_DUR = 4600;
   const TROT_START = 25500;
+  const ALL_TROT_BODY = TROTS.map(t => t.bodyClass);
 
-  // Make the captions feel cinematic during globe-trot
   wt(() => caption.classList.add("globe"), TROT_START - 200);
 
   TROTS.forEach((trot, i) => {
     const t = TROT_START + i * TROT_DUR;
     wt(() => {
-      // Hide previous
+      // Hide previous trot
       document.querySelectorAll(".trot.show").forEach(el => el.classList.remove("show"));
+      // Clear any per-scene body class
+      ALL_TROT_BODY.forEach(c => document.body.classList.remove(c));
       // Show current
       const el = document.getElementById(trot.id);
       if (el) el.classList.add("show");
+      document.body.classList.add(trot.bodyClass);
       setCaption(trot.caption);
-      // Light hearts spawning between us during each location
       burstWalkHearts(8);
     }, t);
   });
 
-  // End of globe-trot — fade trots and return to garden
+  // End of globe-trot — fade trots, clear body classes, return to garden
   const TROT_END = TROT_START + TROTS.length * TROT_DUR;
   wt(() => {
     document.querySelectorAll(".trot.show").forEach(el => el.classList.remove("show"));
+    ALL_TROT_BODY.forEach(c => document.body.classList.remove(c));
     caption.classList.remove("globe");
   }, TROT_END);
 
