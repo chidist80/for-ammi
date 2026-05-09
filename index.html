@@ -828,6 +828,11 @@
     animation: ammiIdle 1.4s ease-in-out infinite;
     transform-origin: 50% 100%;
   }
+  .ammi-waiting .frame {
+    position: absolute;
+    inset: 0;
+  }
+  .ammi-waiting .frame.b { opacity: 0; }
   @keyframes ammiIdle {
     0%, 100% { transform: translateY(0)    rotate(-2deg); }
     50%      { transform: translateY(-5px) rotate(2deg); }
@@ -838,6 +843,78 @@
   @keyframes ammiHug {
     0%, 100% { transform: translateY(0) rotate(0deg) translateX(0); }
     50%      { transform: translateY(-3px) rotate(8deg) translateX(8px); }
+  }
+
+  /* ========== Dancing together (after the meet) ========== */
+  .ammi-waiting.dancing {
+    animation: danceAmmi 0.9s ease-in-out infinite;
+  }
+  .ammi-waiting.dancing .frame.a { animation: stepSwap 0.45s steps(1) infinite; }
+  .ammi-waiting.dancing .frame.b { animation: stepSwap 0.45s steps(1) infinite reverse; }
+  @keyframes danceAmmi {
+    0%   { transform: translateY(0)    rotate(-10deg) translateX(-6px); }
+    50%  { transform: translateY(-8px) rotate(10deg)  translateX(6px); }
+    100% { transform: translateY(0)    rotate(-10deg) translateX(-6px); }
+  }
+
+  .walker.dancing {
+    animation: danceTishan 0.9s ease-in-out infinite;
+  }
+  /* When dancing, the step swap continues (already running on .frame.a/.b) */
+  @keyframes danceTishan {
+    0%   { transform: translateY(0)    rotate(10deg)  translateX(6px); }
+    50%  { transform: translateY(-8px) rotate(-10deg) translateX(-6px); }
+    100% { transform: translateY(0)    rotate(10deg)  translateX(6px); }
+  }
+
+  /* Sparkles + music notes during the dance */
+  .dance-sparkle {
+    position: absolute;
+    pointer-events: none;
+    font-family: "Inter", sans-serif;
+    font-size: 18px;
+    opacity: 0;
+    z-index: 14;
+    animation: danceSparkle 2.6s ease-out forwards;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+  }
+  @keyframes danceSparkle {
+    0%   { opacity: 0; transform: translate(0, 0)  scale(0.4) rotate(0deg); }
+    20%  { opacity: 1; transform: translate(var(--dx, 0), var(--dy, -30px)) scale(1.2) rotate(15deg); }
+    100% { opacity: 0; transform: translate(calc(var(--dx, 0) * 1.5), calc(var(--dy, -120px) * 1.4)) scale(0.7) rotate(35deg); }
+  }
+
+  /* Subtle dusk overlay that deepens during the dance */
+  .dusk-veil {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 8;
+    background: radial-gradient(ellipse at center,
+      transparent 30%,
+      rgba(74, 40, 88, 0.25) 80%,
+      rgba(20, 12, 38, 0.5) 100%);
+    opacity: 0;
+    transition: opacity 4s var(--ease-soft);
+  }
+  .dusk-veil.show { opacity: 1; }
+
+  /* Stars that appear above the dance */
+  .dance-star {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: #fff8e0;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #fff8e0;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 12;
+    animation: starWake 2s var(--ease) forwards, twinkleSlow 3s ease-in-out 2s infinite;
+  }
+  @keyframes starWake {
+    0%   { opacity: 0; transform: scale(0); }
+    100% { opacity: 1; transform: scale(1); }
   }
 
   /* Captions, eyebrow, hearts burst */
@@ -1836,7 +1913,10 @@
 
       <div class="b-bigtree"></div>
 
-      <div class="ammi-waiting" id="walkAmmi"></div>
+      <div class="ammi-waiting" id="walkAmmi">
+        <div class="frame a" id="walkAmmiA"></div>
+        <div class="frame b" id="walkAmmiB"></div>
+      </div>
 
       <div class="b-flower" style="--fc:#f06888; left:22vw;"></div>
       <div class="b-flower" style="--fc:#ff8c6b; left:30vw;"></div>
@@ -1856,6 +1936,7 @@
     <div class="frame b" id="walkTishanB"></div>
   </div>
 
+  <div class="dusk-veil" id="duskVeil"></div>
   <div class="walk-eyebrow" id="walkEyebrow">viii · the journey home</div>
   <div class="walk-caption" id="walkCaption"></div>
   <div class="walk-hearts-burst" id="walkHearts"></div>
@@ -2159,6 +2240,32 @@ syyyyyyyyyyyyyys
 ..pppp....pppp..
 ..pppp....pppp..
 ..gggg....gggg..
+................
+`;
+
+// Ammi step frame (legs together) for dance animation
+const AMMI_STEP = `
+....kkkkkkkk....
+...kkkkkkkkkk...
+..kkkssssssskk..
+.kksssssssssssk.
+.ksskeesseekssk.
+.kssseessseesk..
+.kssssssssssss..
+.ksssrrrssssk...
+..kkssssssskk...
+...kkkkkkkkk....
+.....ssssss.....
+..syyyyyyyyyys..
+syyyyyyyyyyyyyys
+syyyyyyyyyyyyyys
+.syyyyyyyyyyys..
+..yyyyyyyyyy....
+..pppppppppppp..
+....pppppppp....
+....pppppppp....
+....pppppppp....
+....gggggggg....
 ................
 `;
 
@@ -2530,10 +2637,12 @@ function burstSparkles(parent, x, y, color) {
 }
 
 /* ==========================================================
-   Walk scene — 8-bit side-scrolling adventure
+   Walk scene — 8-bit side-scrolling adventure + dance
    ========================================================== */
 let walkInit = false;
 let walkTimers = [];
+let danceSparkleTimer = null;
+let danceHeartsTimer = null;
 
 const ADVENTURE_CAPTIONS = [
   { t: 600,   text: "to find my way back to you..." },
@@ -2545,8 +2654,15 @@ const ADVENTURE_CAPTIONS = [
 function clearWalkTimers() {
   walkTimers.forEach(clearTimeout);
   walkTimers = [];
+  clearInterval(danceSparkleTimer); danceSparkleTimer = null;
+  clearInterval(danceHeartsTimer);  danceHeartsTimer  = null;
 }
 function wt(fn, ms) { walkTimers.push(setTimeout(fn, ms)); }
+function setCaption(text) {
+  const c = document.getElementById("walkCaption");
+  c.classList.remove("show");
+  wt(() => { c.textContent = text; c.classList.add("show"); }, 400);
+}
 
 function initWalk() {
   document.body.classList.add("adventure");
@@ -2558,71 +2674,91 @@ function initWalk() {
   const heartsBurst = document.getElementById("walkHearts");
   const walker = document.getElementById("walkTishan");
   const ammi = document.getElementById("walkAmmi");
+  const dusk = document.getElementById("duskVeil");
 
-  // Render sprites (idempotent)
   if (!walkInit) {
     walkInit = true;
     document.getElementById("walkTishanA").innerHTML = pixelArt(TISHAN_SPRITE, 6);
     document.getElementById("walkTishanB").innerHTML = pixelArt(TISHAN_STEP,   6);
-    document.getElementById("walkAmmi").innerHTML    = pixelArt(AMMI_SPRITE,   6);
+    document.getElementById("walkAmmiA").innerHTML   = pixelArt(AMMI_SPRITE,   6);
+    document.getElementById("walkAmmiB").innerHTML   = pixelArt(AMMI_STEP,     6);
   }
 
-  // Reset state for re-entry
+  // Reset for re-entry
   clearWalkTimers();
   eyebrow.classList.remove("show");
   caption.classList.remove("show");
   cont.classList.remove("show");
   heartsBurst.innerHTML = "";
-  walker.classList.remove("arrived");
+  walker.classList.remove("arrived", "dancing");
   walker.classList.add("walk-bob");
-  ammi.classList.remove("met");
+  ammi.classList.remove("met", "dancing");
+  dusk.classList.remove("show");
+  document.querySelectorAll(".dance-star, .dance-sparkle").forEach(el => el.remove());
 
-  // Force-reflow to restart the world scroll animation
+  // Restart world scroll
   world.classList.remove("go");
   void world.offsetWidth;
   world.classList.add("go");
 
-  // Reveal eyebrow
+  // Eyebrow
   wt(() => eyebrow.classList.add("show"), 600);
 
-  // Cycle captions across biomes
-  ADVENTURE_CAPTIONS.forEach(({ t, text }) => {
-    wt(() => {
-      caption.classList.remove("show");
-      wt(() => {
-        caption.textContent = text;
-        caption.classList.add("show");
-      }, 400);
-    }, t);
-  });
+  // Captions during the journey
+  ADVENTURE_CAPTIONS.forEach(({ t, text }) => wt(() => setCaption(text), t));
 
-  // World scrolls for 22s. Tishan reaches Ammi at the end.
-  // ~21s — meet
+  // ===== ACT I: meet (existing beat) =====
   wt(() => {
     walker.classList.remove("walk-bob");
     walker.classList.add("arrived");
     ammi.classList.add("met");
-    burstWalkHearts();
+    burstWalkHearts(30);
   }, 21000);
 
-  // Final caption locks in
-  wt(() => {
-    caption.classList.remove("show");
-    wt(() => {
-      caption.textContent = "you. always you.";
-      caption.classList.add("show");
-    }, 400);
-  }, 22500);
+  wt(() => setCaption("you. always you."), 22500);
 
-  // Continue button
-  wt(() => cont.classList.add("show"), 24000);
+  // ===== ACT II: the dance =====
+  // After ~3s of hugging, transition into a dance
+  wt(() => {
+    walker.classList.remove("arrived");
+    ammi.classList.remove("met");
+    walker.classList.add("dancing");
+    ammi.classList.add("dancing");
+    setCaption("now — let's dance.");
+    startDanceSparkles();
+    startDanceHearts();
+  }, 25500);
+
+  // Dusk falls during the dance
+  wt(() => dusk.classList.add("show"), 28000);
+
+  // Stars wake up over the dance
+  wt(() => wakeStars(12), 30000);
+
+  // Caption swap mid-dance
+  wt(() => setCaption("just you and me, ammi."), 31500);
+
+  // ===== ACT III: settle, look up =====
+  wt(() => {
+    walker.classList.remove("dancing");
+    ammi.classList.remove("dancing");
+    walker.classList.add("arrived");
+    ammi.classList.add("met");
+    clearInterval(danceSparkleTimer); danceSparkleTimer = null;
+    setCaption("side by side.");
+  }, 36000);
+
+  wt(() => setCaption("always."), 39500);
+
+  // Continue
+  wt(() => cont.classList.add("show"), 41500);
 }
 
-function burstWalkHearts() {
+function burstWalkHearts(count = 30) {
   const container = document.getElementById("walkHearts");
   const COLORS = ["#ff8c6b", "#f06888", "#ffb3c1", "#ffd36b", "#f5a623"];
   const HEARTS = ["♥", "❀", "✿", "♥", "♥"];
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < count; i++) {
     setTimeout(() => {
       const h = document.createElement("div");
       h.className = "burst-heart";
@@ -2638,6 +2774,71 @@ function burstWalkHearts() {
       container.appendChild(h);
       setTimeout(() => h.remove(), 1700);
     }, i * 55);
+  }
+}
+
+/* Continuous dance hearts — float between Tishan and Ammi */
+function startDanceHearts() {
+  const container = document.getElementById("walkHearts");
+  const COLORS = ["#ff8c6b", "#f06888", "#ffb3c1", "#ffd36b"];
+  const HEARTS = ["♥", "❀", "✿"];
+  danceHeartsTimer = setInterval(() => {
+    if (SCENES[current].id !== "scene-walk") return;
+    const h = document.createElement("div");
+    h.className = "burst-heart";
+    h.textContent = HEARTS[(Math.random() * HEARTS.length) | 0];
+    h.style.left = (Math.random() * 40 - 20) + "px";
+    h.style.top = "0px";
+    h.style.color = COLORS[(Math.random() * COLORS.length) | 0];
+    h.style.fontSize = (14 + Math.random() * 12) + "px";
+    const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.2;
+    const dist = 60 + Math.random() * 80;
+    h.style.setProperty("--tx", Math.cos(angle) * dist + "px");
+    h.style.setProperty("--ty", Math.sin(angle) * dist - 20 + "px");
+    container.appendChild(h);
+    setTimeout(() => h.remove(), 1700);
+  }, 250);
+}
+
+/* Music-note sparkles around the dancers */
+function startDanceSparkles() {
+  const scene = document.getElementById("scene-walk");
+  const SYMS = ["♪", "♫", "✦", "✧", "♥"];
+  const COLORS = ["#ffd36b", "#ff8c6b", "#f06888", "#ffb3c1", "#fff8e0"];
+  danceSparkleTimer = setInterval(() => {
+    if (SCENES[current].id !== "scene-walk") return;
+    const s = document.createElement("div");
+    s.className = "dance-sparkle";
+    s.textContent = SYMS[(Math.random() * SYMS.length) | 0];
+    const startX = window.innerWidth * 0.5 + (Math.random() - 0.5) * 280;
+    const startY = window.innerHeight * 0.55 + (Math.random() - 0.5) * 100;
+    s.style.left = startX + "px";
+    s.style.top  = startY + "px";
+    s.style.color = COLORS[(Math.random() * COLORS.length) | 0];
+    s.style.fontSize = (16 + Math.random() * 14) + "px";
+    const dx = (Math.random() - 0.5) * 120;
+    const dy = -60 - Math.random() * 80;
+    s.style.setProperty("--dx", dx + "px");
+    s.style.setProperty("--dy", dy + "px");
+    scene.appendChild(s);
+    setTimeout(() => s.remove(), 2700);
+  }, 200);
+}
+
+/* Stars wake up above the dance */
+function wakeStars(n) {
+  const scene = document.getElementById("scene-walk");
+  for (let i = 0; i < n; i++) {
+    setTimeout(() => {
+      const s = document.createElement("div");
+      s.className = "dance-star";
+      s.style.left = (10 + Math.random() * 80) + "%";
+      s.style.top  = (4  + Math.random() * 35) + "%";
+      const sz = 2 + Math.random() * 3;
+      s.style.width = sz + "px";
+      s.style.height = sz + "px";
+      scene.appendChild(s);
+    }, i * 180);
   }
 }
 
