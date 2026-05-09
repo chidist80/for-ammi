@@ -2651,33 +2651,6 @@
     100% { opacity: 0; transform: scale(1.4); }
   }
 
-  /* Iris wipe — circular reveal between trot scenes */
-  .iris-wipe {
-    position: absolute;
-    inset: 0;
-    z-index: 25;
-    pointer-events: none;
-    background: #1a0e22;
-    clip-path: circle(150% at 50% 50%);
-    opacity: 0;
-  }
-  .iris-wipe.closing {
-    opacity: 1;
-    animation: irisClose 0.55s cubic-bezier(.5,.0,.7,1) forwards;
-  }
-  .iris-wipe.opening {
-    opacity: 1;
-    animation: irisOpen 0.7s cubic-bezier(.3,.7,.4,1) forwards;
-  }
-  @keyframes irisClose {
-    0%   { clip-path: circle(150% at 50% 55%); }
-    100% { clip-path: circle(0%   at 50% 55%); }
-  }
-  @keyframes irisOpen {
-    0%   { clip-path: circle(0%   at 50% 55%); }
-    100% { clip-path: circle(150% at 50% 55%); opacity: 0; }
-  }
-
   /* Slow approach pose — Tishan's footsteps slow and bob softens */
   .walker.approaching {
     animation: walkerApproach 0.8s ease-in-out infinite !important;
@@ -4370,7 +4343,6 @@
   <div class="dusk-veil" id="duskVeil"></div>
   <div class="home-moon" id="homeMoon"></div>
   <div class="walk-flash" id="walkFlash"></div>
-  <div class="iris-wipe" id="walkIris"></div>
   <div class="walk-eyebrow" id="walkEyebrow">viii · the journey home</div>
   <div class="walk-caption" id="walkCaption"></div>
   <div class="walk-hearts-burst" id="walkHearts"></div>
@@ -5253,8 +5225,6 @@ function initWalk() {
   if (flashInit) flashInit.classList.remove("flash");
   const glowInit = document.getElementById("embraceGlow");
   if (glowInit) glowInit.classList.remove("show");
-  const irisInit = document.getElementById("walkIris");
-  if (irisInit) irisInit.classList.remove("closing", "opening");
   const moonInit = document.getElementById("homeMoon");
   if (moonInit) moonInit.classList.remove("rising");
   dusk.classList.remove("show");
@@ -5401,18 +5371,8 @@ function initWalk() {
 
   wt(() => caption.classList.add("globe"), TROT_START - 200);
 
-  const iris = document.getElementById("walkIris");
-
   TROTS.forEach((trot, i) => {
     const t = TROT_START + i * TROT_DUR;
-
-    // Iris-close shortly before each trot starts → cinematic cut
-    wt(() => {
-      if (!iris) return;
-      iris.classList.remove("opening", "closing");
-      void iris.offsetWidth;
-      iris.classList.add("closing");
-    }, t - 450);
 
     // Trot transition + choreography start
     wt(() => {
@@ -5438,40 +5398,17 @@ function initWalk() {
       document.body.classList.add(trot.bodyClass);
       trot.choreo();
       burstWalkHearts(6);
-
-      // Iris-open: reveal the new world (slight delay so the swap finishes)
-      if (iris) {
-        setTimeout(() => {
-          iris.classList.remove("closing");
-          void iris.offsetWidth;
-          iris.classList.add("opening");
-        }, 60);
-      }
     }, t);
     // Captions per trot (scheduled absolutely)
     trot.captions.forEach(c => wt(() => setCaption(c.text), t + c.t));
   });
 
-  // End of globe-trot — iris-close, then fade trots, clear body classes
+  // End of globe-trot — fade trots, clear body classes
   const TROT_END = TROT_START + TROTS.length * TROT_DUR;
-  wt(() => {
-    if (iris) {
-      iris.classList.remove("opening", "closing");
-      void iris.offsetWidth;
-      iris.classList.add("closing");
-    }
-  }, TROT_END - 450);
   wt(() => {
     document.querySelectorAll(".trot.show").forEach(el => el.classList.remove("show"));
     ALL_TROT_BODY.forEach(c => document.body.classList.remove(c));
     caption.classList.remove("globe");
-    if (iris) {
-      setTimeout(() => {
-        iris.classList.remove("closing");
-        void iris.offsetWidth;
-        iris.classList.add("opening");
-      }, 60);
-    }
   }, TROT_END);
 
   // ===== ACT III: home, side by side =====
