@@ -884,6 +884,340 @@
     100% { opacity: 0; transform: translate(calc(var(--dx, 0) * 1.5), calc(var(--dy, -120px) * 1.4)) scale(0.7) rotate(35deg); }
   }
 
+  /* ==================================================================
+     GLOBE-TROT — overlay panels for each adventure location
+     ================================================================== */
+  .globe-trot-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 7;
+    pointer-events: none;
+  }
+  .trot {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1s var(--ease-soft);
+    overflow: hidden;
+  }
+  .trot.show { opacity: 1; }
+
+  /* ----- PARIS ----- */
+  .trot-paris {
+    background: linear-gradient(180deg,
+      #ff6b88 0%, #ff8c6b 25%, #ffce6e 55%, #ffe1a3 80%, #fff0d6 100%);
+  }
+  .trot-paris .city-silhouette {
+    position: absolute;
+    bottom: 18vh;
+    left: 0;
+    right: 0;
+    height: 12vh;
+    background:
+      linear-gradient(90deg,
+        transparent 0%, transparent 8%,
+        #2a1828 8%, #2a1828 12%, transparent 12%, transparent 16%,
+        #2a1828 16%, #2a1828 22%, transparent 22%, transparent 28%,
+        #2a1828 28%, #2a1828 34%, transparent 34%, transparent 38%,
+        #2a1828 38%, #2a1828 42%, transparent 42%, transparent 60%,
+        #2a1828 60%, #2a1828 64%, transparent 64%, transparent 70%,
+        #2a1828 70%, #2a1828 76%, transparent 76%, transparent 82%,
+        #2a1828 82%, #2a1828 88%, transparent 88%);
+    mask-image: linear-gradient(180deg, transparent 30%, black 100%);
+    opacity: 0.7;
+  }
+  .trot-paris .eiffel {
+    position: absolute;
+    bottom: 18vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 220px;
+  }
+  .trot-paris .seine {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 18vh;
+    background: linear-gradient(180deg, #4a3a5e 0%, #2a1c40 100%);
+  }
+  .trot-paris .seine::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: rgba(255, 220, 180, 0.4);
+  }
+
+  /* ----- SKYDIVING ----- */
+  .trot-skydiving {
+    background: linear-gradient(180deg,
+      #6cb5e8 0%, #a8d4f0 50%, #d4ecf5 100%);
+  }
+  .trot-skydiving .speed-lines {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.5) 49.5%, rgba(255,255,255,0.5) 50.5%, transparent 51%);
+    background-size: 80px 100%;
+    animation: speedLines 0.5s linear infinite;
+    opacity: 0.7;
+  }
+  @keyframes speedLines {
+    from { background-position: 0 0; }
+    to   { background-position: -80px 0; }
+  }
+  .trot-skydiving .sky-cloud {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    filter: blur(1px);
+    animation: cloudPass 1.4s linear infinite;
+  }
+  @keyframes cloudPass {
+    from { transform: translateY(-30vh); }
+    to   { transform: translateY(120vh); }
+  }
+  .parachute {
+    position: absolute;
+    bottom: calc(22vh + 132px);
+    width: 80px;
+    height: 50px;
+  }
+  .parachute.tishan-chute { left: calc(50% - 100px); }
+  .parachute.ammi-chute  { left: calc(50% + 20px); }
+  .parachute .canopy {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 36px;
+    background: var(--pc, #ff8c6b);
+    border-radius: 50% 50% 0 0;
+    box-shadow:
+      inset 0 -6px 0 rgba(0,0,0,0.18),
+      inset 8px 0 0 rgba(255,255,255,0.18);
+  }
+  .parachute .canopy::before, .parachute .canopy::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(0,0,0,0.25);
+  }
+  .parachute .canopy::before { left: 33%; transform: rotate(-8deg); }
+  .parachute .canopy::after  { right: 33%; transform: rotate(8deg); }
+  .parachute .strings {
+    position: absolute;
+    top: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 14px;
+    border-left: 1.5px solid #3a2418;
+    border-right: 1.5px solid #3a2418;
+    transform: translateX(-50%) skewX(0deg);
+  }
+
+  /* ----- ANTARCTICA / PENGUINS ----- */
+  .trot-penguins {
+    background: linear-gradient(180deg,
+      #b8d8ec 0%, #d4ebf5 50%, #f0f8fc 100%);
+  }
+  .trot-penguins .snow-ground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 28vh;
+    background: linear-gradient(180deg, #ffffff 0%, #e0eef5 60%, #b8d4e8 100%);
+  }
+  .trot-penguins .iceberg {
+    position: absolute;
+    bottom: 22vh;
+    width: var(--iw, 120px);
+    height: var(--ih, 120px);
+    background: linear-gradient(180deg, #ffffff 0%, #c4d8ed 100%);
+    clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+    opacity: 0.85;
+  }
+  .penguin {
+    position: absolute;
+    bottom: 22vh;
+    width: 26px;
+    height: 38px;
+    filter: drop-shadow(0 3px 0 rgba(0,0,0,0.15));
+  }
+  .penguin .body {
+    position: absolute;
+    inset: 0;
+    background: #1a1a1a;
+    border-radius: 50% 50% 35% 35% / 55% 55% 45% 45%;
+  }
+  .penguin .belly {
+    position: absolute;
+    inset: 7px 5px 4px;
+    background: white;
+    border-radius: 50% 50% 35% 35% / 55% 55% 45% 45%;
+  }
+  .penguin .beak {
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-bottom: 4px solid #ff9000;
+  }
+  .penguin .eye-l, .penguin .eye-r {
+    position: absolute;
+    top: 6px;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+  }
+  .penguin .eye-l { left: 8px; }
+  .penguin .eye-r { right: 8px; }
+  .penguin.waddle { animation: waddle 1.6s ease-in-out infinite; }
+  @keyframes waddle {
+    0%, 100% { transform: rotate(-4deg); }
+    50%      { transform: rotate(4deg); }
+  }
+  .trot-penguins .snowflake {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    animation: snowFall var(--snow-dur, 6s) linear infinite;
+    opacity: 0.85;
+  }
+  @keyframes snowFall {
+    from { transform: translateY(-10vh); }
+    to   { transform: translateY(110vh); }
+  }
+
+  /* ----- AURORA / NORTHERN LIGHTS ----- */
+  .trot-aurora {
+    background: linear-gradient(180deg,
+      #0a1340 0%, #1a1d50 30%, #2a2865 60%, #3a3a78 100%);
+  }
+  .trot-aurora .aurora-band {
+    position: absolute;
+    top: 0;
+    left: -10%;
+    width: 120%;
+    height: 60%;
+    background:
+      radial-gradient(ellipse 60% 30% at 25% 35%, rgba(0, 255, 170, 0.55), transparent 70%),
+      radial-gradient(ellipse 50% 25% at 65% 50%, rgba(180, 60, 255, 0.45), transparent 70%),
+      radial-gradient(ellipse 40% 20% at 50% 25%, rgba(120, 200, 255, 0.4), transparent 70%);
+    filter: blur(12px);
+    animation: auroraShift 8s ease-in-out infinite alternate;
+  }
+  @keyframes auroraShift {
+    0%   { transform: translateX(-30px) translateY(-10px); }
+    100% { transform: translateX(30px)  translateY(10px); }
+  }
+  .trot-aurora .aurora-stars {
+    position: absolute;
+    inset: 0 0 40% 0;
+    background-image:
+      radial-gradient(circle, white 1px, transparent 1.5px),
+      radial-gradient(circle, white 0.5px, transparent 1px);
+    background-size: 80px 80px, 50px 50px;
+    background-position: 10px 13px, 30px 40px;
+    opacity: 0.6;
+  }
+  .trot-aurora .aurora-snow {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 22vh;
+    background: linear-gradient(180deg, #6a7c95 0%, #4a5a78 60%, #2a3050 100%);
+  }
+  .aurora-pine {
+    position: absolute;
+    bottom: 22vh;
+    width: 0;
+    height: 0;
+    border-left: var(--pw, 14px) solid transparent;
+    border-right: var(--pw, 14px) solid transparent;
+    border-bottom: var(--ph, 50px) solid #0a1f1c;
+    filter: drop-shadow(0 0 4px rgba(0, 255, 170, 0.2));
+  }
+
+  /* ----- TOKYO / CHERRY BLOSSOMS ----- */
+  .trot-tokyo {
+    background: linear-gradient(180deg,
+      #ffd6e0 0%, #ffb5c7 25%, #ffc5d8 50%, #ffe0d4 75%, #fff5e8 100%);
+  }
+  .trot-tokyo .pagoda {
+    position: absolute;
+    bottom: 22vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 180px;
+  }
+  .trot-tokyo .ground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 22vh;
+    background: linear-gradient(180deg, #f4d4dc 0%, #e0a8b8 100%);
+  }
+  .tokyo-petal {
+    position: absolute;
+    width: 9px;
+    height: 11px;
+    background: var(--pc, #ffb3c1);
+    border-radius: 50% 50% 20% 20%;
+    animation: blossomFall var(--td, 7s) linear infinite;
+    opacity: 0.85;
+  }
+  @keyframes blossomFall {
+    0%   { transform: translateY(-10vh) rotate(0deg); }
+    100% { transform: translateY(110vh) rotate(540deg); }
+  }
+  .tokyo-lantern {
+    position: absolute;
+    width: 18px;
+    height: 24px;
+    background: #c43838;
+    border-radius: 8px;
+    box-shadow:
+      inset 0 -3px 0 rgba(0,0,0,0.25),
+      0 0 14px rgba(255, 200, 100, 0.6);
+  }
+  .tokyo-lantern::before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 6px;
+    background: #1a1a1a;
+  }
+
+  /* Globe-trot caption — bigger to match the spectacle */
+  .walk-caption.globe {
+    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    font-style: italic;
+    color: #fff;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.5);
+  }
+
   /* Subtle dusk overlay that deepens during the dance */
   .dusk-veil {
     position: absolute;
@@ -2139,6 +2473,115 @@
     <div class="frame b" id="walkTishanB"></div>
   </div>
 
+  <!-- ===== GLOBE-TROT OVERLAY ===== -->
+  <div class="globe-trot-overlay" id="globeTrot">
+
+    <!-- PARIS -->
+    <div class="trot trot-paris" id="trotParis">
+      <div class="city-silhouette"></div>
+      <svg class="eiffel" viewBox="0 0 100 220" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#2a1828">
+          <polygon points="15,220 32,220 49,90 51,90"/>
+          <polygon points="85,220 68,220 51,90 49,90"/>
+          <rect x="28" y="172" width="44" height="3"/>
+          <rect x="34" y="135" width="32" height="2"/>
+          <rect x="40" y="100" width="20" height="2"/>
+          <rect x="44" y="60" width="12" height="40"/>
+          <polygon points="42,60 58,60 50,28"/>
+          <rect x="49" y="6" width="2" height="22"/>
+          <line x1="20" y1="220" x2="32" y2="220" stroke="#2a1828" stroke-width="2"/>
+        </g>
+      </svg>
+      <div class="seine"></div>
+    </div>
+
+    <!-- SKYDIVING -->
+    <div class="trot trot-skydiving" id="trotSkydiving">
+      <div class="speed-lines"></div>
+      <div class="sky-cloud" style="top:0; left:10%; width:80px; height:24px; animation-delay:-0.3s;"></div>
+      <div class="sky-cloud" style="top:0; left:65%; width:120px; height:32px; animation-delay:-0.8s;"></div>
+      <div class="sky-cloud" style="top:0; left:30%; width:60px; height:18px; animation-delay:-1.1s;"></div>
+      <div class="sky-cloud" style="top:0; left:80%; width:90px; height:26px; animation-delay:-0.5s;"></div>
+      <div class="parachute tishan-chute" style="--pc:#ff8c6b;">
+        <div class="canopy"></div>
+        <div class="strings"></div>
+      </div>
+      <div class="parachute ammi-chute" style="--pc:#ffd36b;">
+        <div class="canopy"></div>
+        <div class="strings"></div>
+      </div>
+    </div>
+
+    <!-- ANTARCTICA -->
+    <div class="trot trot-penguins" id="trotPenguins">
+      <div class="snow-ground"></div>
+      <div class="iceberg" style="--iw:140px; --ih:140px; left:8%;"></div>
+      <div class="iceberg" style="--iw:90px;  --ih:80px;  left:78%;"></div>
+      <div class="iceberg" style="--iw:60px;  --ih:50px;  left:60%;"></div>
+      <div class="penguin waddle" style="left: calc(50% - 130px);">
+        <div class="body"></div><div class="belly"></div><div class="beak"></div>
+        <div class="eye-l"></div><div class="eye-r"></div>
+      </div>
+      <div class="penguin waddle" style="left: calc(50% - 95px); animation-delay: -0.4s;">
+        <div class="body"></div><div class="belly"></div><div class="beak"></div>
+        <div class="eye-l"></div><div class="eye-r"></div>
+      </div>
+      <div class="penguin waddle" style="left: calc(50% + 80px); animation-delay: -0.8s;">
+        <div class="body"></div><div class="belly"></div><div class="beak"></div>
+        <div class="eye-l"></div><div class="eye-r"></div>
+      </div>
+      <div class="penguin waddle" style="left: calc(50% + 110px); animation-delay: -1.2s;">
+        <div class="body"></div><div class="belly"></div><div class="beak"></div>
+        <div class="eye-l"></div><div class="eye-r"></div>
+      </div>
+      <div class="snowflake" style="left:15%;  --snow-dur:7s; animation-delay:-1s;"></div>
+      <div class="snowflake" style="left:35%;  --snow-dur:9s; animation-delay:-3s;"></div>
+      <div class="snowflake" style="left:55%;  --snow-dur:8s; animation-delay:-2s;"></div>
+      <div class="snowflake" style="left:75%;  --snow-dur:6s; animation-delay:-4s;"></div>
+      <div class="snowflake" style="left:90%;  --snow-dur:7.5s; animation-delay:-1.5s;"></div>
+    </div>
+
+    <!-- AURORA -->
+    <div class="trot trot-aurora" id="trotAurora">
+      <div class="aurora-stars"></div>
+      <div class="aurora-band"></div>
+      <div class="aurora-snow"></div>
+      <div class="aurora-pine" style="--pw:14px; --ph:50px; left: 8%;"></div>
+      <div class="aurora-pine" style="--pw:18px; --ph:64px; left: 18%;"></div>
+      <div class="aurora-pine" style="--pw:12px; --ph:42px; left: 28%;"></div>
+      <div class="aurora-pine" style="--pw:16px; --ph:58px; left: 78%;"></div>
+      <div class="aurora-pine" style="--pw:14px; --ph:48px; left: 88%;"></div>
+    </div>
+
+    <!-- TOKYO / CHERRY BLOSSOMS -->
+    <div class="trot trot-tokyo" id="trotTokyo">
+      <svg class="pagoda" viewBox="0 0 110 180" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#5a2c5e">
+          <rect x="44" y="120" width="22" height="60"/>
+          <polygon points="14,120 96,120 84,98 26,98"/>
+          <rect x="49" y="80" width="12" height="18"/>
+          <polygon points="22,80 88,80 76,60 34,60"/>
+          <rect x="49" y="46" width="12" height="14"/>
+          <polygon points="28,46 82,46 70,28 40,28"/>
+          <rect x="51" y="6" width="8" height="22"/>
+          <rect x="54" y="0" width="2" height="6"/>
+        </g>
+      </svg>
+      <div class="ground"></div>
+      <div class="tokyo-lantern" style="left:18%; top:40%;"></div>
+      <div class="tokyo-lantern" style="right:18%; top:38%;"></div>
+      <div class="tokyo-petal" style="left:10%;  --pc:#ffb3c1; --td:7s;  animation-delay:-1s;"></div>
+      <div class="tokyo-petal" style="left:25%;  --pc:#f06888; --td:8s;  animation-delay:-3s;"></div>
+      <div class="tokyo-petal" style="left:40%;  --pc:#ffd6e0; --td:6s;  animation-delay:-2s;"></div>
+      <div class="tokyo-petal" style="left:55%;  --pc:#ffb3c1; --td:9s;  animation-delay:-4s;"></div>
+      <div class="tokyo-petal" style="left:70%;  --pc:#f06888; --td:7.5s;animation-delay:-2.5s;"></div>
+      <div class="tokyo-petal" style="left:85%;  --pc:#ffd6e0; --td:8s;  animation-delay:-3.5s;"></div>
+      <div class="tokyo-petal" style="left:18%;  --pc:#ff8c6b; --td:8s;  animation-delay:-5s;"></div>
+      <div class="tokyo-petal" style="left:62%;  --pc:#ff8c6b; --td:6.5s;animation-delay:-4.5s;"></div>
+    </div>
+
+  </div>
+
   <div class="dusk-veil" id="duskVeil"></div>
   <div class="walk-eyebrow" id="walkEyebrow">viii · the journey home</div>
   <div class="walk-caption" id="walkCaption"></div>
@@ -2998,14 +3441,17 @@ function initWalk() {
   // Reset for re-entry
   clearWalkTimers();
   eyebrow.classList.remove("show");
-  caption.classList.remove("show");
+  caption.classList.remove("show", "globe");
   cont.classList.remove("show");
   heartsBurst.innerHTML = "";
   walker.classList.remove("arrived", "dancing");
   walker.classList.add("walk-bob");
   ammi.classList.remove("met", "dancing");
   dusk.classList.remove("show");
+  document.querySelectorAll(".dance-star, .dance-sparkle, .trot.show").forEach(el => el.classList ? el.classList.remove("show", "dance-star", "dance-sparkle") : null);
+  // Properly remove dance leftovers (which are full elements) and hide trots
   document.querySelectorAll(".dance-star, .dance-sparkle").forEach(el => el.remove());
+  document.querySelectorAll(".trot").forEach(el => el.classList.remove("show"));
 
   // Restart world scroll
   world.classList.remove("go");
@@ -3028,41 +3474,58 @@ function initWalk() {
 
   wt(() => setCaption("you. always you."), 22500);
 
-  // ===== ACT II: the dance =====
-  // After ~3s of hugging, transition into a dance
+  // ===== ACT II: globetrotting montage =====
+  // 5 destinations, 4.2s each → 21s of globe-trot
+  const TROTS = [
+    { id: "trotParis",     caption: "we'd see paris."         },
+    { id: "trotSkydiving", caption: "fall from the sky."      },
+    { id: "trotPenguins",  caption: "say hi to the penguins." },
+    { id: "trotAurora",    caption: "chase the lights."       },
+    { id: "trotTokyo",     caption: "dance under the blossoms." },
+  ];
+  const TROT_DUR = 4200; // ms per destination
+  const TROT_START = 25500;
+
+  // Make the captions feel cinematic during globe-trot
+  wt(() => caption.classList.add("globe"), TROT_START - 200);
+
+  TROTS.forEach((trot, i) => {
+    const t = TROT_START + i * TROT_DUR;
+    wt(() => {
+      // Hide previous
+      document.querySelectorAll(".trot.show").forEach(el => el.classList.remove("show"));
+      // Show current
+      const el = document.getElementById(trot.id);
+      if (el) el.classList.add("show");
+      setCaption(trot.caption);
+      // Light hearts spawning between us during each location
+      burstWalkHearts(8);
+    }, t);
+  });
+
+  // End of globe-trot — fade trots and return to garden
+  const TROT_END = TROT_START + TROTS.length * TROT_DUR;
   wt(() => {
-    walker.classList.remove("arrived");
-    ammi.classList.remove("met");
-    walker.classList.add("dancing");
-    ammi.classList.add("dancing");
-    setCaption("now — let's dance.");
-    startDanceSparkles();
-    startDanceHearts();
-  }, 25500);
+    document.querySelectorAll(".trot.show").forEach(el => el.classList.remove("show"));
+    caption.classList.remove("globe");
+  }, TROT_END);
 
-  // Dusk falls during the dance
-  wt(() => dusk.classList.add("show"), 28000);
-
-  // Stars wake up over the dance
-  wt(() => wakeStars(12), 30000);
-
-  // Caption swap mid-dance
-  wt(() => setCaption("just you and me, ammi."), 31500);
-
-  // ===== ACT III: settle, look up =====
+  // ===== ACT III: home, side by side =====
   wt(() => {
     walker.classList.remove("dancing");
     ammi.classList.remove("dancing");
     walker.classList.add("arrived");
     ammi.classList.add("met");
-    clearInterval(danceSparkleTimer); danceSparkleTimer = null;
-    setCaption("side by side.");
-  }, 36000);
+    setCaption("we'd see all of it, ammi.");
+    dusk.classList.add("show");
+    wakeStars(14);
+  }, TROT_END + 600);
 
-  wt(() => setCaption("always."), 39500);
+  wt(() => setCaption("side by side."), TROT_END + 4200);
+  wt(() => setCaption("always."),       TROT_END + 7200);
 
   // Continue
-  wt(() => cont.classList.add("show"), 41500);
+  wt(() => cont.classList.add("show"), TROT_END + 9200);
 }
 
 function burstWalkHearts(count = 30) {
