@@ -920,6 +920,240 @@
     100% { transform: translateY(0)    rotate(10deg)  translateX(6px); }
   }
 
+  /* ========== Joyful celebration run after the meet ========== */
+  .walker.celebrating, .ammi-waiting.celebrating {
+    animation: celebrateRun 0.22s ease-in-out infinite !important;
+    transition: left 1.1s cubic-bezier(.42, 0, .25, 1) !important;
+  }
+  .walker.celebrating .frame.a, .ammi-waiting.celebrating .frame.a {
+    animation: stepSwap 0.16s steps(1) infinite;
+  }
+  .walker.celebrating .frame.b, .ammi-waiting.celebrating .frame.b {
+    animation: stepSwap 0.16s steps(1) infinite reverse;
+  }
+  @keyframes celebrateRun {
+    0%, 100% { transform: translateY(0)     rotate(-6deg); }
+    50%      { transform: translateY(-10px) rotate(6deg); }
+  }
+  .walker.celebrating::after, .ammi-waiting.celebrating::after {
+    content: "";
+    position: absolute;
+    bottom: 4px;
+    left: -32px;
+    width: 42px;
+    height: 10px;
+    background: radial-gradient(ellipse, rgba(255, 246, 233, 0.85) 20%, transparent 70%);
+    filter: blur(2px);
+    animation: dustTrail 0.36s ease-out infinite;
+  }
+  /* Mirrored dust when running leftward */
+  .walker.celebrating.flipx::after, .ammi-waiting.celebrating.flipx::after {
+    left: auto;
+    right: -32px;
+    animation-name: dustTrailRight;
+  }
+  @keyframes dustTrailRight {
+    0%   { opacity: 0; transform: translateX(0); }
+    50%  { opacity: 1; }
+    100% { opacity: 0; transform: translateX(22px); }
+  }
+
+  /* ========== Skydiving — plane jump sequence ========== */
+  /* Big plane that arrives at the start of the skydiving scene */
+  .sky-bigplane {
+    position: absolute;
+    top: 14vh;
+    left: -55vw;
+    width: 320px;
+    height: 96px;
+    z-index: 10;
+    pointer-events: none;
+    filter: drop-shadow(0 18px 12px rgba(0,0,0,0.28));
+    opacity: 0;
+  }
+  .sky-bigplane.arriving {
+    animation: bigPlaneArrive 1.6s cubic-bezier(.2,.6,.3,1) forwards;
+  }
+  @keyframes bigPlaneArrive {
+    0%   { left: -55vw; opacity: 0; }
+    20%  { opacity: 1; }
+    100% { left: calc(50% - 160px); opacity: 1; }
+  }
+  .sky-bigplane.cruising {
+    left: calc(50% - 160px);
+    opacity: 1;
+    animation: bigPlaneBob 1.4s ease-in-out infinite;
+  }
+  @keyframes bigPlaneBob {
+    0%, 100% { transform: translateY(0)    rotate(-1deg); }
+    50%      { transform: translateY(-6px) rotate(1deg); }
+  }
+  .sky-bigplane.leaving {
+    animation: bigPlaneLeave 2.4s cubic-bezier(.4,.0,.7,1) forwards;
+  }
+  @keyframes bigPlaneLeave {
+    0%   { left: calc(50% - 160px); opacity: 1; transform: translateY(0); }
+    100% { left: 130vw;             opacity: 0.7; transform: translateY(-40px) rotate(-3deg); }
+  }
+  .sky-bigplane .body {
+    position: absolute;
+    top: 28%;
+    bottom: 22%;
+    left: 6%;
+    right: 8%;
+    background: linear-gradient(180deg, #f5e9d0 0%, #e0c89b 55%, #b89760 100%);
+    border-radius: 50% / 80%;
+    box-shadow:
+      inset 0 -6px 0 rgba(58, 36, 24, 0.28),
+      inset 0 6px 0 rgba(255,255,255,0.4);
+  }
+  .sky-bigplane .nose {
+    position: absolute;
+    top: 30%;
+    right: 0;
+    width: 12%;
+    height: 40%;
+    background: #b89760;
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+    filter: drop-shadow(0 2px 0 rgba(0,0,0,0.2));
+  }
+  .sky-bigplane .tail {
+    position: absolute;
+    top: 0;
+    left: 8%;
+    width: 12%;
+    height: 60%;
+    background: #b89760;
+    clip-path: polygon(0 100%, 70% 0, 100% 100%);
+  }
+  .sky-bigplane .wing {
+    position: absolute;
+    top: 60%;
+    left: 22%;
+    width: 64%;
+    height: 14px;
+    background: linear-gradient(180deg, #6a4838 0%, #4a3018 100%);
+    border-radius: 6px;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+  }
+  .sky-bigplane .wing::after {
+    content: "";
+    position: absolute;
+    top: -8px;
+    right: 8%;
+    width: 14px;
+    height: 8px;
+    background: #d96978;
+    border-radius: 2px 2px 0 0;
+  }
+  .sky-bigplane .door {
+    position: absolute;
+    top: 36%;
+    left: 32%;
+    width: 14%;
+    height: 38%;
+    background: #1a0e22;
+    border: 2px solid #6a4838;
+    border-radius: 4px 4px 0 0;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.6);
+  }
+  .sky-bigplane .windows {
+    position: absolute;
+    top: 38%;
+    left: 50%;
+    width: 30%;
+    height: 14%;
+    background-image: radial-gradient(circle, #87ceeb 40%, transparent 45%);
+    background-size: 16px 100%;
+    background-repeat: repeat-x;
+    background-position: 0 50%;
+    opacity: 0.95;
+  }
+  .sky-bigplane .prop {
+    position: absolute;
+    top: 28%;
+    right: -2px;
+    width: 4px;
+    height: 44%;
+    background: rgba(0,0,0,0.55);
+    border-radius: 2px;
+    transform-origin: 50% 50%;
+    animation: propSpin 0.06s linear infinite;
+  }
+  @keyframes propSpin {
+    0%   { transform: scaleY(1); }
+    50%  { transform: scaleY(0.08); }
+    100% { transform: scaleY(1); }
+  }
+  .sky-bigplane .smoke {
+    position: absolute;
+    top: 50%;
+    left: -40px;
+    width: 40px;
+    height: 14px;
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.65) 60%, rgba(255,255,255,0.85) 100%);
+    border-radius: 50%;
+    filter: blur(2px);
+    animation: smokeWisp 1.2s ease-out infinite;
+    transform-origin: 100% 50%;
+  }
+  @keyframes smokeWisp {
+    0%   { transform: scaleX(0.4); opacity: 0.9; }
+    100% { transform: scaleX(1.6) translateX(-30px); opacity: 0; }
+  }
+
+  /* Walkers transformed up to ride the plane (calc lifts them to plane door regardless of viewport) */
+  .walker.on-plane, .ammi-waiting.on-plane {
+    animation: planeRideBob 1.2s ease-in-out infinite !important;
+    z-index: 11;
+  }
+  @keyframes planeRideBob {
+    0%, 100% { transform: translateY(calc(-64vh + 48px)) rotate(-1deg); }
+    50%      { transform: translateY(calc(-64vh + 42px)) rotate(1deg); }
+  }
+
+  /* The jump itself — drop and tumble out of the plane all the way to bottom */
+  .walker.diving, .ammi-waiting.diving {
+    animation: skyJump 1.2s cubic-bezier(.5,.0,.65,1) forwards !important;
+    z-index: 11;
+  }
+  @keyframes skyJump {
+    0%   { transform: translateY(calc(-64vh + 48px)) rotate(-20deg); }
+    15%  { transform: translateY(calc(-60vh + 48px)) rotate(40deg); }
+    35%  { transform: translateY(calc(-44vh + 48px)) rotate(140deg); }
+    55%  { transform: translateY(calc(-26vh + 48px)) rotate(260deg); }
+    75%  { transform: translateY(calc(-12vh + 48px)) rotate(360deg); }
+    100% { transform: translateY(0)                  rotate(360deg); }
+  }
+
+  /* Freefall — arms-spread shake with wind streaks */
+  .walker.freefalling, .ammi-waiting.freefalling {
+    animation: freefallShake 0.18s ease-in-out infinite !important;
+    z-index: 11;
+  }
+  @keyframes freefallShake {
+    0%, 100% { transform: translateY(0)    rotate(-4deg) scale(1.04); }
+    50%      { transform: translateY(-3px) rotate(4deg)  scale(1); }
+  }
+  .walker.freefalling::before, .ammi-waiting.freefalling::before {
+    content: "";
+    position: absolute;
+    top: -38px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 56px;
+    height: 32px;
+    background:
+      radial-gradient(ellipse 50% 100% at 50% 100%, rgba(255,255,255,0.6) 0%, transparent 70%);
+    filter: blur(1px);
+    animation: windWisp 0.32s ease-out infinite;
+  }
+  @keyframes windWisp {
+    0%   { opacity: 0; transform: translateX(-50%) translateY(-12px) scaleY(0.5); }
+    50%  { opacity: 0.9; }
+    100% { opacity: 0; transform: translateX(-50%) translateY(0)     scaleY(1.4); }
+  }
+
   /* Sparkles + music notes during the dance */
   .dance-sparkle {
     position: absolute;
@@ -1871,6 +2105,18 @@
     bottom: calc(22vh + 132px);
     width: 80px;
     height: 50px;
+    opacity: 0;
+    transition: opacity 0.6s ease-out;
+  }
+  .parachute.deployed {
+    opacity: 1;
+    animation: chuteDeploy 0.8s cubic-bezier(.34,1.56,.64,1) forwards, parachuteWave 2.4s ease-in-out 0.8s infinite;
+    transform-origin: 50% 100%;
+  }
+  @keyframes chuteDeploy {
+    0%   { transform: scaleY(0.1) scaleX(0.3); opacity: 0; }
+    60%  { transform: scaleY(1.1) scaleX(1.05); opacity: 1; }
+    100% { transform: scaleY(1) scaleX(1); opacity: 1; }
   }
   .parachute.tishan-chute { left: calc(50% - 100px); }
   .parachute.ammi-chute  { left: calc(50% + 20px); }
@@ -3432,6 +3678,18 @@
       <!-- Tiny plane drifting in the distance -->
       <div class="sky-plane"></div>
 
+      <!-- BIG plane — characters jump out of this -->
+      <div class="sky-bigplane" id="skyBigplane">
+        <div class="smoke"></div>
+        <div class="tail"></div>
+        <div class="body"></div>
+        <div class="windows"></div>
+        <div class="door"></div>
+        <div class="wing"></div>
+        <div class="nose"></div>
+        <div class="prop"></div>
+      </div>
+
       <!-- Flock of birds far below -->
       <div class="sky-bird" style="top:55%; animation-delay:-2s; animation-duration:8s;"></div>
       <div class="sky-bird" style="top:58%; animation-delay:-4s; animation-duration:7s;"></div>
@@ -4491,12 +4749,19 @@ function initWalk() {
   caption.classList.remove("show", "globe");
   cont.classList.remove("show");
   heartsBurst.innerHTML = "";
-  walker.classList.remove("arrived", "dancing", "rushing", "gazing");
+  walker.classList.remove("arrived", "dancing", "rushing", "gazing", "celebrating", "flipx", "on-plane", "diving", "freefalling");
   walker.classList.add("walk-bob");
-  ammi.classList.remove("met", "dancing", "catching", "gazing");
+  ammi.classList.remove("met", "dancing", "catching", "gazing", "celebrating", "flipx", "on-plane", "diving", "freefalling");
   // Clear inline positions so the next play uses the CSS default (Tishan: calc(50% - 50px), Ammi: 350vw)
   walker.style.left = "";
   ammi.style.left = "";
+  walker.style.opacity = "";
+  ammi.style.opacity = "";
+  walker.style.transition = "";
+  ammi.style.transition = "";
+  document.querySelectorAll(".parachute").forEach(p => p.classList.remove("deployed"));
+  const bigplaneInit = document.getElementById("skyBigplane");
+  if (bigplaneInit) bigplaneInit.classList.remove("arriving", "cruising", "leaving");
   dusk.classList.remove("show");
   ["in-paris", "in-skydiving", "in-penguins", "in-aurora", "in-tokyo"].forEach(c =>
     document.body.classList.remove(c)
@@ -4534,6 +4799,30 @@ function initWalk() {
 
   wt(() => setCaption("you. always you."), 23800);
 
+  // ===== ACT I.5: joyful run across the screen =====
+  // After they meet — both burst into a celebration sprint, racing across
+  // the screen, hearts trailing.  Sets the energy for the globe-trot.
+  wt(() => {
+    walker.classList.remove("arrived");
+    ammi.classList.remove("met");
+    walker.classList.add("celebrating");
+    ammi.classList.add("celebrating");
+    walker.style.left = "calc(50% + 26vw)";
+    ammi.style.left   = "calc(50% + 18vw)";
+    burstWalkHearts(10);
+  }, 24500);
+
+  wt(() => setCaption("let's go everywhere."), 24600);
+
+  // Sprint back the other way
+  wt(() => {
+    walker.classList.add("flipx");
+    ammi.classList.add("flipx");
+    walker.style.left = "calc(50% - 26vw)";
+    ammi.style.left   = "calc(50% - 18vw)";
+    burstWalkHearts(10);
+  }, 25700);
+
   // ===== ACT II: globetrotting montage =====
   // 5 destinations, 5s each → 25s of globe-trot
   const TROTS = [
@@ -4548,8 +4837,9 @@ function initWalk() {
     {
       id: "trotSkydiving", bodyClass: "in-skydiving",
       captions: [
-        { t: 200,  text: "leap from the sky together." },
-        { t: 2600, text: "freefall. just us." },
+        { t: 200,  text: "leap from the sky." },
+        { t: 1500, text: "ready? go!" },
+        { t: 3200, text: "freefall. just us." },
       ],
       choreo: choreographSkydiving,
     },
@@ -4590,8 +4880,17 @@ function initWalk() {
     wt(() => {
       document.querySelectorAll(".trot.show").forEach(el => el.classList.remove("show"));
       ALL_TROT_BODY.forEach(c => document.body.classList.remove(c));
-      walker.classList.remove("rushing", "gazing", "walk-bob", "arrived");
-      ammi.classList.remove("catching", "gazing");
+      walker.classList.remove("rushing", "gazing", "walk-bob", "arrived", "celebrating", "flipx", "on-plane", "diving", "freefalling");
+      ammi.classList.remove("catching", "gazing", "celebrating", "flipx", "on-plane", "diving", "freefalling");
+      // Reset inline opacity / transition that the skydiving scene sets
+      walker.style.opacity = "";
+      ammi.style.opacity = "";
+      walker.style.transition = "";
+      ammi.style.transition = "";
+      // Reset parachutes between scenes
+      document.querySelectorAll(".parachute").forEach(p => p.classList.remove("deployed"));
+      const bigplane = document.getElementById("skyBigplane");
+      if (bigplane) bigplane.classList.remove("arriving", "cruising", "leaving");
       const el = document.getElementById(trot.id);
       if (el) el.classList.add("show");
       document.body.classList.add(trot.bodyClass);
@@ -4612,8 +4911,13 @@ function initWalk() {
 
   // ===== ACT III: home, side by side =====
   wt(() => {
-    walker.classList.remove("dancing", "rushing", "gazing", "walk-bob");
-    ammi.classList.remove("dancing", "catching", "gazing");
+    walker.classList.remove("dancing", "rushing", "gazing", "walk-bob", "celebrating", "flipx", "on-plane", "diving", "freefalling");
+    ammi.classList.remove("dancing", "catching", "gazing", "celebrating", "flipx", "on-plane", "diving", "freefalling");
+    walker.style.opacity = "";
+    ammi.style.opacity = "";
+    walker.style.transition = "";
+    ammi.style.transition = "";
+    document.querySelectorAll(".parachute").forEach(p => p.classList.remove("deployed"));
     walker.classList.add("arrived");
     ammi.classList.add("met");
     walker.style.left = "calc(50% + 30px)";
@@ -4681,15 +4985,85 @@ function choreographParis() {
   wt(() => burstWalkHearts(6), 3400);
 }
 
-/* SKYDIVING: Already falling. They drift apart, then together. */
+/* SKYDIVING: Real plane jump. Plane swoops in, both leap out, freefall,
+   then parachutes deploy. */
 function choreographSkydiving() {
-  // Spread apart in freefall
-  settleTishan("calc(50% - 110px)");
-  settleAmmi("calc(50% + 80px)", "met");
-  // Then drift together mid-air
-  wt(() => settleTishan("calc(50% - 50px)"), 1800);
-  wt(() => settleAmmi("calc(50% + 30px)"),    2000);
-  wt(() => burstWalkHearts(6), 3000);
+  const walker = document.getElementById("walkTishan");
+  const ammi   = document.getElementById("walkAmmi");
+  const plane  = document.getElementById("skyBigplane");
+  const tishanChute = document.querySelector(".parachute.tishan-chute");
+  const ammiChute   = document.querySelector(".parachute.ammi-chute");
+
+  // Hide them while the plane is arriving — they appear already aboard
+  walker.style.opacity = "0";
+  ammi.style.opacity   = "0";
+  // Park them ON the plane (the on-plane class lifts them via transform).
+  // Plane is centered at left:calc(50% - 160px), door at ~32% across → 50%-35px.
+  walker.classList.add("on-plane");
+  ammi.classList.add("on-plane");
+  walker.style.left = "calc(50% - 84px)";  // at the door (centered on door)
+  ammi.style.left   = "calc(50% - 30px)";  // peeking out behind tishan
+
+  // 1. Plane arrives from the left (0-1200ms)
+  if (plane) {
+    plane.classList.remove("leaving", "cruising");
+    void plane.offsetWidth;
+    plane.classList.add("arriving");
+    wt(() => {
+      plane.classList.remove("arriving");
+      plane.classList.add("cruising");
+    }, 1200);
+  }
+
+  // 1.5. Characters fade in atop the plane just as it settles
+  wt(() => {
+    walker.style.transition = "opacity 0.35s ease-out, left 0.9s cubic-bezier(.4,0,.2,1)";
+    ammi.style.transition   = "opacity 0.35s ease-out, left 0.9s cubic-bezier(.4,0,.2,1)";
+    walker.style.opacity = "1";
+    ammi.style.opacity   = "1";
+  }, 1100);
+
+  // 2. JUMP! Both tumble out of the plane.
+  wt(() => {
+    walker.style.transition = "";
+    ammi.style.transition   = "";
+    walker.classList.remove("on-plane");
+    ammi.classList.remove("on-plane");
+    walker.classList.add("diving");
+    ammi.classList.add("diving");
+    burstWalkHearts(8);
+  }, 1500);
+
+  // 3. Plane peels away, leaving them mid-air
+  wt(() => {
+    if (plane) {
+      plane.classList.remove("cruising");
+      plane.classList.add("leaving");
+    }
+  }, 1800);
+
+  // 4. Land into the freefall pose, drifting apart in the wind
+  wt(() => {
+    walker.classList.remove("diving");
+    ammi.classList.remove("diving");
+    walker.classList.add("freefalling");
+    ammi.classList.add("freefalling");
+    walker.style.left = "calc(50% - 110px)";
+    ammi.style.left   = "calc(50% + 80px)";
+  }, 2700);
+
+  // 5. Drift back together
+  wt(() => {
+    walker.style.left = "calc(50% - 50px)";
+    ammi.style.left   = "calc(50% + 30px)";
+  }, 3200);
+
+  // 6. Chutes deploy — burst of hearts as they catch each other
+  wt(() => {
+    if (tishanChute) tishanChute.classList.add("deployed");
+    if (ammiChute)   ammiChute.classList.add("deployed");
+    burstWalkHearts(8);
+  }, 3500);
 }
 
 /* ANTARCTICA: Tishan dashes into the penguin colony. Ammi follows,
