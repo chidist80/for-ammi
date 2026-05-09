@@ -1023,108 +1023,250 @@
   }
 
   /* ==================================================================
-     365 days
+     Memory Garden — interactive game with surprise
      ================================================================== */
-  #scene-365 {
-    padding: 8vh 4vw;
+  #scene-garden {
+    padding: 6vh 4vw;
     justify-content: center;
+    align-items: center;
   }
-  .days-shell {
+  .garden-shell {
+    width: 100%;
+    max-width: 780px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
-    max-width: 760px;
   }
-  .days-eyebrow { margin-bottom: 1vh; }
-  .days-headline {
-    font-family: "Cormorant Garamond", serif;
-    font-style: italic;
-    font-weight: 400;
-    font-size: clamp(1.5rem, 3.2vw, 2.2rem);
-    color: var(--ink);
+  .garden-prompt {
+    font-family: "Caveat", cursive;
+    font-weight: 600;
+    font-size: clamp(1.3rem, 2.4vw, 1.6rem);
+    color: var(--coral);
+    margin: 1.5vh 0 2vh;
     text-align: center;
-    margin-bottom: 4vh;
     opacity: 0;
-    transition: opacity 1.6s var(--ease) 0.4s;
-    line-height: 1.4;
-    max-width: 28ch;
+    transition: opacity 1s var(--ease-soft);
   }
-  .days-headline.show { opacity: 0.9; }
+  .garden-prompt.show { opacity: 0.85; }
+  .garden-prompt.hide { opacity: 0; pointer-events: none; }
 
-  .days-grid {
-    display: grid;
-    grid-template-columns: repeat(31, 1fr);
-    gap: 5px;
+  .garden-stage {
+    position: relative;
     width: 100%;
+    aspect-ratio: 16 / 9;
+    min-height: 280px;
+    background:
+      linear-gradient(180deg,
+        #c4ddec 0%,
+        #ddeef6 25%,
+        #ffe4c2 45%,
+        #ffd092 50%,
+        #8b6f4e 50.5%,
+        #6b5340 70%,
+        #4a3a2a 100%);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 18px 40px rgba(58, 36, 24, 0.22), inset 0 0 0 1px rgba(58, 36, 24, 0.1);
   }
-  .day-dot {
-    aspect-ratio: 1;
+  /* Sun in the garden sky */
+  .garden-stage::before {
+    content: "";
+    position: absolute;
+    top: 8%;
+    right: 12%;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    background: rgba(58, 36, 24, 0.1);
-    cursor: none;
-    transition: background 0.4s var(--ease-soft), transform 0.4s var(--ease-soft), box-shadow 0.4s var(--ease-soft);
-    transform: scale(0);
-    animation: dayPop 0.6s var(--ease) forwards;
+    background: radial-gradient(circle at 35% 35%, #fff8e0, #ffd980);
+    box-shadow: 0 0 30px rgba(255, 217, 128, 0.6);
   }
-  .day-dot:hover {
-    background: var(--marigold);
-    transform: scale(1.6);
-    box-shadow: 0 0 12px var(--marigold);
-  }
-  .day-dot.lit { background: var(--marigold); box-shadow: 0 0 8px rgba(245, 166, 35, 0.5); }
-  .day-dot.special { background: rgba(240, 104, 136, 0.25); }
-  .day-dot.special:hover { background: var(--rose); box-shadow: 0 0 14px var(--rose); }
-  .day-dot.special.lit { background: var(--rose); box-shadow: 0 0 10px rgba(240, 104, 136, 0.6); }
-  @keyframes dayPop {
-    to { transform: scale(1); }
+  /* Grass line at the soil edge */
+  .garden-stage::after {
+    content: "";
+    position: absolute;
+    top: 49%;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(180deg, #8fb573 0%, #5a8243 100%);
+    box-shadow: 0 -2px 0 #8fb573;
   }
 
-  .day-tooltip {
-    position: fixed;
-    background: var(--paper);
-    border: 1px solid var(--apricot);
-    padding: 0.9em 1.2em;
-    border-radius: 12px;
+  .garden-soil {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    cursor: none;
+  }
+  .garden-soil::before {
+    /* Tiny grass tufts above soil */
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: 0;
+    right: 0;
+    height: 14px;
+    background-image:
+      linear-gradient(90deg, transparent 4px, #8fb573 4px, #8fb573 6px, transparent 6px),
+      linear-gradient(90deg, transparent 10px, #6b9450 10px, #6b9450 12px, transparent 12px);
+    background-size: 16px 14px, 18px 14px;
+    opacity: 0.5;
+  }
+
+  /* Pixel flower */
+  .garden-flower {
+    position: absolute;
+    width: 32px;
+    height: 56px;
+    transform: translate(-50%, -100%) scale(0);
+    transform-origin: 50% 100%;
+    pointer-events: none;
+    animation: flowerGrow 1.4s var(--ease) forwards;
+  }
+  @keyframes flowerGrow {
+    0%   { transform: translate(-50%, -100%) scale(0); }
+    50%  { transform: translate(-50%, -100%) scale(0.5); }
+    75%  { transform: translate(-50%, -100%) scale(1.15); }
+    100% { transform: translate(-50%, -100%) scale(1); }
+  }
+  .garden-flower .stem {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 3px;
+    height: 60%;
+    background: #4a7c3c;
+    transform: translateX(-50%);
+    box-shadow: 1px 0 0 #2c5e30;
+  }
+  .garden-flower .leaf {
+    position: absolute;
+    bottom: 24%;
+    width: 12px;
+    height: 7px;
+    background: #5a8c4c;
+    border-radius: 50% 50% 0 0;
+  }
+  .garden-flower .leaf.left  { left: 18%;  transform: rotate(-30deg); }
+  .garden-flower .leaf.right { right: 18%; transform: rotate(30deg); }
+  .garden-flower .bloom {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    transform: translateX(-50%);
+    background: var(--bc, #f06888);
+    border-radius: 50%;
+    box-shadow:
+      -8px 0 0 var(--bc, #f06888),
+       8px 0 0 var(--bc, #f06888),
+       0 -8px 0 var(--bc, #f06888),
+       0  8px 0 var(--bc, #f06888);
+  }
+  .garden-flower .bloom::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    background: #ffd36b;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(58, 36, 24, 0.15);
+  }
+
+  /* Flying-into-formation transition */
+  .garden-flower.formation {
+    animation: none;
+    transition:
+      left 2.4s cubic-bezier(.5, -0.2, .3, 1.4),
+      top  2.4s cubic-bezier(.5, -0.2, .3, 1.4);
+    transform: translate(-50%, -100%) scale(1.2);
+    z-index: 5;
+    filter: drop-shadow(0 0 10px var(--bc, #f06888));
+  }
+
+  /* Floating thank-you */
+  .garden-thanks {
+    position: absolute;
     font-family: "Caveat", cursive;
     font-weight: 600;
     font-size: 1.15rem;
-    color: var(--ink);
+    color: var(--paper);
+    background: rgba(58, 36, 24, 0.88);
+    padding: 0.45em 0.9em;
+    border-radius: 14px;
     pointer-events: none;
-    z-index: 30;
-    box-shadow: 0 8px 30px rgba(255, 140, 107, 0.25), 0 2px 8px rgba(0,0,0,0.08);
-    opacity: 0;
-    transform: translate(-50%, calc(-100% - 16px)) scale(0.96);
-    transition: opacity 0.3s var(--ease-soft), transform 0.3s var(--ease-soft);
-    max-width: 260px;
-    line-height: 1.45;
-    text-align: center;
-    white-space: pre-wrap;
+    z-index: 10;
+    white-space: nowrap;
+    transform: translate(-50%, -130%);
+    animation: thanksFloat 3s var(--ease) forwards;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
   }
-  .day-tooltip.show { opacity: 1; transform: translate(-50%, calc(-100% - 16px)) scale(1); }
+  @keyframes thanksFloat {
+    0%   { opacity: 0; transform: translate(-50%, -110%) scale(0.8); }
+    18%  { opacity: 1; transform: translate(-50%, -150%) scale(1); }
+    78%  { opacity: 1; transform: translate(-50%, -185%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -220%) scale(0.9); }
+  }
 
-  .days-counter {
-    margin-top: 4vh;
+  /* Sparkles around landed flowers */
+  .garden-sparkle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #fff8e0;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #ffd980;
+    pointer-events: none;
+    z-index: 6;
+    animation: sparkleOut 1.4s ease-out forwards;
+  }
+  @keyframes sparkleOut {
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+    30%  { opacity: 1; transform: translate(-50%, -50%) scale(1.6); }
+    100% { opacity: 0; transform: translate(calc(-50% + var(--sx, 0)), calc(-50% + var(--sy, 0))) scale(0); }
+  }
+
+  .garden-counter {
     font-family: "Inter", sans-serif;
     font-weight: 500;
     font-size: 0.7rem;
-    letter-spacing: 0.3em;
+    letter-spacing: 0.32em;
     text-transform: uppercase;
     color: var(--ink-soft);
-  }
-  .days-final {
     margin-top: 2.5vh;
+    text-align: center;
+  }
+
+  .garden-final {
+    margin-top: 2.5vh;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 2s var(--ease) 0.4s;
+    max-width: 540px;
+  }
+  .garden-final.show { opacity: 1; }
+  .garden-final-1 {
     font-family: "Cormorant Garamond", serif;
     font-style: italic;
-    font-size: clamp(1.4rem, 2.6vw, 1.8rem);
-    color: var(--rose);
-    text-align: center;
-    max-width: 520px;
-    line-height: 1.5;
-    opacity: 0;
-    transition: opacity 2.2s var(--ease) 0.4s;
+    font-weight: 400;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    color: var(--coral);
+    margin-bottom: 0.3em;
+    line-height: 1.2;
   }
-  .days-final.show { opacity: 1; }
+  .garden-final-2 {
+    font-family: "Caveat", cursive;
+    font-weight: 600;
+    font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  @media (max-width: 600px) {
+    .garden-stage { aspect-ratio: 4 / 5; min-height: 360px; }
+  }
 
   /* ==================================================================
      Constellation — keeps a night palette
@@ -1626,19 +1768,23 @@
 </div>
 
 <!-- ================================================================
-     Scene 7 — 365 days
+     Scene 7 — Memory Garden (interactive game)
      ================================================================ -->
-<div class="scene" id="scene-365">
-  <div class="days-shell">
-    <div class="eyebrow days-eyebrow">vii · three hundred &amp; sixty-five days of you</div>
-    <div class="days-headline" id="daysHeadline">most days you did something quiet i never noticed.</div>
-    <div class="days-grid" id="daysGrid"></div>
-    <div class="days-counter" id="daysCounter">hover any day · 0 noticed</div>
-    <div class="days-final" id="daysFinal">every day was you. you were just too steady for anyone to notice.</div>
+<div class="scene" id="scene-garden">
+  <div class="garden-shell">
+    <div class="eyebrow">vii · the garden</div>
+    <div class="garden-prompt" id="gardenPrompt">tap the soil. plant a thank-you for ammi.</div>
+    <div class="garden-stage">
+      <div class="garden-soil" id="gardenSoil" data-hover></div>
+    </div>
+    <div class="garden-counter" id="gardenCounter">0 / 15 planted</div>
+    <div class="garden-final" id="gardenFinal">
+      <div class="garden-final-1">look what we grew.</div>
+      <div class="garden-final-2">— every flower, you.</div>
+    </div>
   </div>
-  <div class="continue" data-hover id="daysContinue">continue</div>
+  <div class="continue" data-hover id="gardenContinue">continue</div>
 </div>
-<div class="day-tooltip" id="dayTooltip"></div>
 
 <!-- ================================================================
      Scene — The adventure (8-bit side-scrolling journey)
@@ -1863,7 +2009,7 @@ const SCENES = [
   { id: "scene-4",             init: initCareList },
   { id: "scene-gallery",       init: initGallery },
   { id: "scene-sleeping",      init: initBgScene, lines: 6 },
-  { id: "scene-365",           init: init365 },
+  { id: "scene-garden",        init: initGarden },
   { id: "scene-walk",          init: initWalk },
   { id: "scene-constellation", init: initConstellation, night: true },
   { id: "scene-letter",        init: initLetter },
@@ -1892,7 +2038,7 @@ document.body.addEventListener("click", e => {
   if (e.target.closest("#audioToggle")) return;
   if (e.target.closest("#homeLink")) { showScene(0); return; }
   if (sid === "scene-constellation") { if (e.target.closest("#constContinue")) next(); return; }
-  if (sid === "scene-365") { if (e.target.closest(".day-dot")) return; if (e.target.closest("#daysContinue")) next(); return; }
+  if (sid === "scene-garden") { if (e.target.closest("#gardenSoil")) return; if (e.target.closest("#gardenContinue")) next(); return; }
   if (sid === "scene-gallery") { if (e.target.closest("#galleryContinue")) { next(); return; } galleryAdvance(); return; }
   if (sid === "scene-letter") return;
   next();
@@ -2191,92 +2337,196 @@ function galleryAdvance() {
   else next();
 }
 
-/* 365 */
-const SPECIAL_DAYS = {
-  3: "you woke up early and made breakfast.\nnobody asked you to.",
-  17: "you texted to make sure i ate.",
-  29: "you laughed at my bad joke.\nit wasn't even funny.",
-  44: "you sent me a sunset 'just because.'",
-  58: "you remembered an anniversary i forgot.",
-  71: "you stayed up until i got home safe.",
-  85: "you noticed i looked tired and said nothing.\njust made tea.",
-  99: "you forgave something. quietly.",
-  113: "you were proud of me for something small.",
-  130: "you held my hand without making a thing of it.",
-  148: "you bought my favourite snack 'just in case.'",
-  162: "you paused a movie because you wanted to hear my day.",
-  179: "you said 'be safe' and meant ten different things.",
-  195: "you let me figure something out\ninstead of fixing it.",
-  214: "you sent a voice note.\nit made my whole week.",
-  227: "you remembered the medicine i forgot.",
-  239: "you said you were proud of me.\ni was 12. i'm still keeping it.",
-  254: "you cried at a thing i didn't notice was sad.",
-  270: "you fed someone else's child without thinking.",
-  283: "you cleaned my room and said you 'just felt like it.'",
-  297: "you fell asleep on the couch waiting for me.",
-  311: "you defended me to someone i didn't know was talking.",
-  324: "you carried me. literally. i was twenty-something.",
-  338: "you walked slow so i could keep up.",
-  351: "you said 'i love you' first.\nyou always do.",
-  360: "you let me be a kid even when i was tall.",
-};
-const QUIET_LINES = [
-  "you, just being you.",
-  "an ordinary kind of miracle.",
-  "you cooked. you cleaned. you cared.",
-  "another tuesday. another act of love.",
-  "this one i don't remember. you do.",
-  "you held the day together so i didn't have to.",
-  "the kind of love no one writes about.",
-  "quiet. steady. ammi.",
-  "no one noticed but you were here.",
+/* ==========================================================
+   The Memory Garden — interactive game with a surprise
+   ========================================================== */
+const GARDEN_THANKS = [
+  "thank you for the soil you laid",
+  "thank you for tending to me",
+  "thank you for the long winters you sat through",
+  "thank you for noticing the bloom",
+  "thank you for never expecting one",
+  "thank you for the rain you took for me",
+  "thank you for the sun you became",
+  "thank you for letting me grow my own way",
+  "thank you for pulling the weeds",
+  "thank you for staying through droughts",
+  "thank you for the patience",
+  "thank you for the second chances",
+  "thank you for the warmth",
+  "thank you for the roots",
+  "thank you for everything that grew",
 ];
-function quietLine(seed) { return QUIET_LINES[seed % QUIET_LINES.length]; }
+const FLOWER_COLORS = [
+  "#ff8c6b", "#f06888", "#ffb3c1", "#ffd36b",
+  "#f5a623", "#b8a3d4", "#ff7a5c", "#e9b29c",
+  "#ffd092", "#f06888", "#ffd36b", "#8fb573",
+  "#ff8c6b", "#ffb3c1", "#f06888",
+];
+const TARGET_FLOWERS = 15;
 
-let days365Init = false;
-function init365() {
-  const grid = document.getElementById("daysGrid");
-  const tooltip = document.getElementById("dayTooltip");
-  const counter = document.getElementById("daysCounter");
-  const headline = document.getElementById("daysHeadline");
-  const final = document.getElementById("daysFinal");
-  const cont = document.getElementById("daysContinue");
+let plantedFlowers = [];
+let gardenInit = false;
+let gardenComplete = false;
 
-  if (!days365Init) {
-    days365Init = true;
-    grid.innerHTML = "";
-    let lit = 0;
-    for (let i = 0; i < 365; i++) {
-      const dot = document.createElement("div");
-      dot.className = "day-dot" + (SPECIAL_DAYS[i] ? " special" : "");
-      dot.style.animationDelay = (i * 3) + "ms";
-      const onIn = () => {
-        if (!dot.classList.contains("lit")) {
-          dot.classList.add("lit");
-          lit++;
-          counter.textContent = `hover any day · ${lit} noticed`;
-          if (lit === 8) setTimeout(() => { final.classList.add("show"); cont.classList.add("show"); }, 800);
-        }
-        const msg = SPECIAL_DAYS[i] || quietLine(i);
-        tooltip.textContent = msg;
-        const r = dot.getBoundingClientRect();
-        tooltip.style.left = (r.left + r.width / 2) + "px";
-        tooltip.style.top = r.top + "px";
-        tooltip.classList.add("show");
-      };
-      const onOut = () => { clearTimeout(tooltip._h); tooltip._h = setTimeout(() => tooltip.classList.remove("show"), 200); };
-      dot.addEventListener("mouseenter", onIn);
-      dot.addEventListener("mouseleave", onOut);
-      dot.addEventListener("click", onIn);
-      grid.appendChild(dot);
-    }
+function initGarden() {
+  const soil = document.getElementById("gardenSoil");
+  const counter = document.getElementById("gardenCounter");
+  const prompt = document.getElementById("gardenPrompt");
+  const final = document.getElementById("gardenFinal");
+  const cont = document.getElementById("gardenContinue");
+  const eyebrow = document.querySelector("#scene-garden .eyebrow");
+
+  if (!gardenInit) {
+    gardenInit = true;
+    soil.addEventListener("click", e => {
+      const r = soil.getBoundingClientRect();
+      plantFlower(e.clientX - r.left, e.clientY - r.top);
+    });
+    soil.addEventListener("touchstart", e => {
+      if (e.touches[0]) {
+        const r = soil.getBoundingClientRect();
+        plantFlower(e.touches[0].clientX - r.left, e.touches[0].clientY - r.top);
+      }
+    }, { passive: true });
   }
 
-  headline.classList.remove("show");
+  // If the user already finished and is revisiting, just show final state
+  if (gardenComplete) {
+    eyebrow.classList.add("show");
+    prompt.classList.add("hide");
+    final.classList.add("show");
+    cont.classList.add("show");
+    return;
+  }
+
+  // Reset for fresh play
+  plantedFlowers.forEach(f => f.el.remove());
+  plantedFlowers = [];
+  soil.querySelectorAll(".garden-thanks, .garden-sparkle").forEach(el => el.remove());
+  counter.textContent = `0 / ${TARGET_FLOWERS} planted`;
+  eyebrow.classList.remove("show");
+  prompt.classList.remove("show", "hide");
   final.classList.remove("show");
   cont.classList.remove("show");
-  setTimeout(() => headline.classList.add("show"), 600);
-  setTimeout(() => cont.classList.add("show"), 14000);
+
+  setTimeout(() => eyebrow.classList.add("show"), 400);
+  setTimeout(() => prompt.classList.add("show"), 1100);
+}
+
+function plantFlower(x, y) {
+  if (gardenComplete || plantedFlowers.length >= TARGET_FLOWERS) return;
+
+  const soil = document.getElementById("gardenSoil");
+  const idx = plantedFlowers.length;
+  const color = FLOWER_COLORS[idx];
+
+  // Avoid clipping edges
+  const flowerHalf = 18;
+  const sx = Math.max(flowerHalf, Math.min(soil.clientWidth - flowerHalf, x));
+  const sy = Math.max(56, Math.min(soil.clientHeight - 8, y));
+
+  const flower = document.createElement("div");
+  flower.className = "garden-flower";
+  flower.style.setProperty("--bc", color);
+  flower.style.left = sx + "px";
+  flower.style.top = sy + "px";
+  flower.innerHTML = `
+    <div class="stem"></div>
+    <div class="leaf left"></div>
+    <div class="leaf right"></div>
+    <div class="bloom"></div>
+  `;
+  soil.appendChild(flower);
+  plantedFlowers.push({ el: flower, x: sx, y: sy, color });
+
+  // Floating thank-you bubble
+  const thanks = document.createElement("div");
+  thanks.className = "garden-thanks";
+  thanks.textContent = GARDEN_THANKS[idx];
+  thanks.style.left = sx + "px";
+  thanks.style.top = (sy - 60) + "px";
+  soil.appendChild(thanks);
+  setTimeout(() => thanks.remove(), 3000);
+
+  document.getElementById("gardenCounter").textContent =
+    `${plantedFlowers.length} / ${TARGET_FLOWERS} planted`;
+
+  // Hide prompt once they get going
+  if (plantedFlowers.length === 4) {
+    document.getElementById("gardenPrompt").classList.add("hide");
+  }
+
+  if (plantedFlowers.length === TARGET_FLOWERS) {
+    setTimeout(triggerHeartFormation, 1700);
+  }
+}
+
+function triggerHeartFormation() {
+  gardenComplete = true;
+  const soil = document.getElementById("gardenSoil");
+  const w = soil.clientWidth;
+  const h = soil.clientHeight;
+  const cx = w / 2;
+  const cy = h * 0.55;
+  const scale = Math.min(w, h) * 0.018;
+
+  // Heart formation points
+  const targets = [];
+  const N = TARGET_FLOWERS;
+  for (let i = 0; i < N; i++) {
+    const t = (i / N) * Math.PI * 2 - Math.PI / 2;
+    const px = 16 * Math.pow(Math.sin(t), 3);
+    const py = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+    targets.push({ x: cx + px * scale, y: cy + py * scale });
+  }
+
+  // Match each planted flower to nearest unused target (greedy)
+  const used = new Set();
+  plantedFlowers.forEach(f => {
+    let best = -1, bestD = Infinity;
+    targets.forEach((t, i) => {
+      if (used.has(i)) return;
+      const d = Math.hypot(t.x - f.x, t.y - f.y);
+      if (d < bestD) { bestD = d; best = i; }
+    });
+    used.add(best);
+    f.target = targets[best];
+  });
+
+  // Animate flight to formation + sparkles on landing
+  plantedFlowers.forEach((f, i) => {
+    setTimeout(() => {
+      f.el.classList.add("formation");
+      f.el.style.left = f.target.x + "px";
+      f.el.style.top  = f.target.y + "px";
+      // Sparkle on landing
+      setTimeout(() => burstSparkles(soil, f.target.x, f.target.y, f.color), 2200);
+    }, i * 60);
+  });
+
+  // Reveal final caption + continue
+  setTimeout(() => {
+    document.getElementById("gardenFinal").classList.add("show");
+    document.getElementById("gardenContinue").classList.add("show");
+  }, 3400);
+}
+
+function burstSparkles(parent, x, y, color) {
+  for (let i = 0; i < 6; i++) {
+    const s = document.createElement("div");
+    s.className = "garden-sparkle";
+    s.style.left = x + "px";
+    s.style.top = y + "px";
+    const angle = (i / 6) * Math.PI * 2 + Math.random() * 0.5;
+    const dist = 22 + Math.random() * 18;
+    s.style.setProperty("--sx", Math.cos(angle) * dist + "px");
+    s.style.setProperty("--sy", Math.sin(angle) * dist + "px");
+    s.style.background = color;
+    s.style.boxShadow = `0 0 12px ${color}`;
+    parent.appendChild(s);
+    setTimeout(() => s.remove(), 1500);
+  }
 }
 
 /* ==========================================================
