@@ -413,158 +413,483 @@
   }
 
   /* ==================================================================
-     Walk scene — 8-bit cinematic sunset
+     Walk scene — 8-bit side-scrolling adventure
      ================================================================== */
-  #scene-walk { padding: 0; overflow: hidden; }
-  .walk-landscape {
+  #scene-walk {
+    padding: 0;
+    overflow: hidden;
+    background: #0a0612;
+  }
+
+  .adventure-world {
     position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(180deg,
-        #ff9eb5 0%,
-        #ffb088 22%,
-        #ffce6e 45%,
-        #ffe1a3 65%,
-        #fff0d0 80%,
-        #fff5e6 100%);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 400vw;
+    display: flex;
+    will-change: transform;
+  }
+  .adventure-world.go {
+    animation: worldScroll 22s cubic-bezier(.42, 0, .58, 1) forwards;
+  }
+  @keyframes worldScroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-300vw); }
+  }
+
+  .biome {
+    position: relative;
+    width: 100vw;
+    height: 100%;
+    flex-shrink: 0;
     overflow: hidden;
   }
-  .walk-sun {
+
+  /* Biome 1 — Mountains at dawn */
+  .biome-1 {
+    background: linear-gradient(180deg,
+      #ff9bb5 0%,
+      #ffb088 25%,
+      #ffce6e 50%,
+      #ffe1a3 70%,
+      #ffeac7 100%);
+  }
+
+  /* Biome 2 — Forest in golden hour */
+  .biome-2 {
+    background: linear-gradient(180deg,
+      #ffb878 0%,
+      #ffd49b 35%,
+      #ffe6b5 65%,
+      #ddd09c 100%);
+  }
+
+  /* Biome 3 — Coast at sunset */
+  .biome-3 {
+    background: linear-gradient(180deg,
+      #c44a6e 0%,
+      #ff7d6e 30%,
+      #ffa873 55%,
+      #ffd398 75%,
+      #fff0d6 100%);
+  }
+
+  /* Biome 4 — Home garden, deeper dusk */
+  .biome-4 {
+    background: linear-gradient(180deg,
+      #6e3a8a 0%,
+      #c44a8e 20%,
+      #ff7d6e 45%,
+      #ffb978 70%,
+      #ffe1b8 100%);
+  }
+
+  /* Sun — placed in biome 1 */
+  .b-sun {
     position: absolute;
-    top: 28%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: clamp(80px, 14vw, 160px);
+    top: 22%;
+    left: 60%;
+    width: clamp(80px, 13vw, 150px);
     aspect-ratio: 1;
     border-radius: 50%;
     background: radial-gradient(circle at 35% 35%, #fff8e0, #ffd980 60%, #ffa45c 100%);
     box-shadow:
       0 0 80px rgba(255, 217, 128, 0.7),
-      0 0 160px rgba(255, 164, 92, 0.4);
+      0 0 180px rgba(255, 164, 92, 0.4);
     animation: sunGlow 4s ease-in-out infinite alternate;
   }
   @keyframes sunGlow {
-    from { box-shadow: 0 0 80px rgba(255, 217, 128, 0.7), 0 0 160px rgba(255, 164, 92, 0.4); }
-    to   { box-shadow: 0 0 110px rgba(255, 217, 128, 0.9), 0 0 220px rgba(255, 164, 92, 0.55); }
+    from { box-shadow: 0 0 80px rgba(255, 217, 128, 0.7), 0 0 180px rgba(255, 164, 92, 0.4); }
+    to   { box-shadow: 0 0 110px rgba(255, 217, 128, 0.95), 0 0 240px rgba(255, 164, 92, 0.6); }
   }
 
-  .walk-cloud {
+  /* Mountains — pixel triangles */
+  .b-mountain {
     position: absolute;
-    background: rgba(255, 246, 233, 0.7);
-    border-radius: 50%;
-    filter: blur(0.5px);
-    animation: drift 60s linear infinite;
+    bottom: 0;
+    background: var(--mc, #7d5d8a);
+    width: var(--mw, 25vw);
+    height: var(--mh, 12vh);
+    clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
   }
 
-  @keyframes drift {
-    from { transform: translateX(-10vw); }
-    to   { transform: translateX(110vw); }
-  }
-
-  .walk-hills {
-    position: absolute;
-    bottom: 18vh;
-    left: 0;
-    right: 0;
-    width: 100%;
-    height: 30vh;
-    pointer-events: none;
-  }
-
-  .walk-ground {
+  /* Ground bands per biome */
+  .b-ground {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
     height: 18vh;
-    background: linear-gradient(180deg, #5a8243 0%, #3e5f30 60%, #2c4422 100%);
   }
-  .walk-ground::before {
+  .b-ground.grass {
+    background: linear-gradient(180deg, #6b9450 0%, #4a6f33 50%, #2c4422 100%);
+  }
+  .b-ground.forest-floor {
+    background: linear-gradient(180deg, #5a4a2c, #3a2e1a 60%, #1c150c 100%);
+  }
+  .b-ground.sand {
+    background: linear-gradient(180deg, #ffd49b 0%, #e8b27a 50%, #b8804f 100%);
+  }
+  .b-ground.dusk-grass {
+    background: linear-gradient(180deg, #5a3d6e, #3a2848 60%, #1c1024 100%);
+  }
+  .b-ground::before {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 4px;
-    background: #8fb573;
-    box-shadow: 0 -2px 0 #8fb573;
-  }
-  /* Pixel grass texture on the ground */
-  .walk-ground::after {
-    content: "";
-    position: absolute;
-    top: 4px;
-    left: 0;
-    right: 0;
-    height: 14px;
-    background-image:
-      linear-gradient(90deg, #5a8243 2px, transparent 2px),
-      linear-gradient(90deg, transparent 6px, #6b9450 6px, #6b9450 8px, transparent 8px);
-    background-size: 12px 14px, 14px 14px;
-    opacity: 0.6;
+    background: rgba(255, 246, 233, 0.25);
   }
 
-  .walk-stage {
+  /* Trees — pixel-style */
+  .b-tree {
+    position: absolute;
+    bottom: 17vh;
+    width: var(--tw, 60px);
+    height: var(--th, 130px);
+  }
+  .b-tree::before {
+    /* Trunk */
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30%;
+    height: 40%;
+    background: #5a3a22;
+    box-shadow: inset -2px 0 0 #3a2410;
+  }
+  .b-tree::after {
+    /* Canopy */
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70%;
+    background: var(--canopy, #3d6e3a);
+    border-radius: 50%;
+    box-shadow:
+      inset -6px -6px 0 var(--canopy-shadow, #28492a),
+      inset 6px 6px 0 var(--canopy-light, #5a8c4c);
+  }
+
+  /* Big tree at the end (Ammi waits here) */
+  .b-bigtree {
+    position: absolute;
+    bottom: 18vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 240px;
+    height: 280px;
+    z-index: 1;
+  }
+  .b-bigtree::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 100px;
+    background: #4a2818;
+    box-shadow: inset -3px 0 0 #2a1408, 0 0 0 2px #2a1408;
+  }
+  .b-bigtree::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: #5a2c5e;
+    border-radius: 50%;
+    box-shadow:
+      inset -10px -10px 0 #3a1c44,
+      inset 12px 12px 0 #7a3c7a,
+      0 0 0 2px #2a1232;
+  }
+
+  /* Ocean waves */
+  .b-ocean {
     position: absolute;
     bottom: 18vh;
     left: 0;
     right: 0;
-    height: 140px;
-    z-index: 5;
+    height: 22vh;
+    background: linear-gradient(180deg, #4a8db5 0%, #2c6088 50%, #1a3e5c 100%);
+  }
+  .b-ocean::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background-image:
+      repeating-linear-gradient(90deg,
+        transparent 0,
+        transparent 16px,
+        rgba(255, 255, 255, 0.15) 16px,
+        rgba(255, 255, 255, 0.15) 20px);
+    animation: waveScroll 4s linear infinite;
+  }
+  @keyframes waveScroll {
+    from { background-position: 0 0; }
+    to   { background-position: 40px 0; }
+  }
+  .b-ocean::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.5);
   }
 
-  .walk-tishan, .walk-ammi {
+  /* Pixel sailboat */
+  .b-boat {
+    position: absolute;
+    bottom: 22vh;
+    width: 40px;
+    height: 30px;
+  }
+  .b-boat::before {
+    content: "";
     position: absolute;
     bottom: 0;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: #3a2418;
+    clip-path: polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%);
+  }
+  .b-boat::after {
+    content: "";
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 16px solid transparent;
+    border-right: 0 solid transparent;
+    border-bottom: 22px solid #ffe2c8;
+  }
+
+  /* Birds — flying in pairs */
+  .b-bird {
+    position: absolute;
+    width: 16px;
+    height: 8px;
+    color: #3a2418;
+  }
+  .b-bird::before, .b-bird::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 7px;
+    height: 4px;
+    border: 2px solid currentColor;
+    border-radius: 50% 50% 0 0;
+    border-bottom: 0;
+    animation: flap 0.6s ease-in-out infinite;
+  }
+  .b-bird::before { left: 0; transform-origin: right center; }
+  .b-bird::after  { right: 0; transform-origin: left center; }
+  @keyframes flap {
+    0%, 100% { transform: scaleY(1) rotate(0deg); }
+    50%      { transform: scaleY(0.6) rotate(-20deg); }
+  }
+
+  /* Butterflies */
+  .b-butterfly {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    animation: flutter var(--fd, 5s) ease-in-out infinite;
+  }
+  .b-butterfly::before, .b-butterfly::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 7px;
+    height: 14px;
+    background: var(--bc, #f06888);
+    border-radius: 50% 50% 30% 30%;
+    animation: butterflyFlap 0.3s ease-in-out infinite;
+  }
+  .b-butterfly::before { left: 0; transform-origin: right center; }
+  .b-butterfly::after  { right: 0; transform-origin: left center; }
+  @keyframes butterflyFlap {
+    0%, 100% { transform: scaleX(1); }
+    50%      { transform: scaleX(0.3); }
+  }
+  @keyframes flutter {
+    0%, 100% { transform: translate(0, 0); }
+    33%      { transform: translate(-15px, -8px); }
+    66%      { transform: translate(8px, 6px); }
+  }
+
+  /* Flowers in biome 4 */
+  .b-flower {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    bottom: 18vh;
+  }
+  .b-flower::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--fc, #f06888);
+    border-radius: 50%;
+    box-shadow:
+      -6px 0 0 var(--fc, #f06888),
+      6px 0 0 var(--fc, #f06888),
+      0 -6px 0 var(--fc, #f06888),
+      0 6px 0 var(--fc, #f06888);
+  }
+  .b-flower::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    background: #ffd36b;
+    border-radius: 50%;
+  }
+
+  /* Stars in biome 4 */
+  .b-twinkle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: #fff8e0;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #fff8e0;
+    animation: twinkleSlow 3s ease-in-out infinite;
+  }
+  @keyframes twinkleSlow {
+    0%, 100% { opacity: 0.3; }
+    50%      { opacity: 1; }
+  }
+
+  /* The Walker — Tishan, fixed in viewport, walking */
+  .walker {
+    position: absolute;
+    bottom: 22vh;
+    left: calc(50% - 50px);
+    width: 96px;
+    height: 132px;
+    z-index: 10;
+    filter: drop-shadow(0 8px 4px rgba(58, 36, 24, 0.25));
     transform-origin: 50% 100%;
-    filter: drop-shadow(0 6px 0 rgba(58, 36, 24, 0.18));
+  }
+  .walker .frame {
+    position: absolute;
+    inset: 0;
+  }
+  .walker .frame.a { animation: stepSwap 0.36s steps(1) infinite; }
+  .walker .frame.b { animation: stepSwap 0.36s steps(1) infinite reverse; }
+  @keyframes stepSwap {
+    0%, 49%   { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+  .walker.walk-bob {
+    animation: walkerBob 0.36s ease-in-out infinite;
+  }
+  @keyframes walkerBob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-5px); }
+  }
+  .walker.arrived {
+    animation: walkerLean 1.2s ease-in-out infinite;
+    left: calc(50% + 30px);
+    transition: left 0.8s var(--ease-soft);
+  }
+  @keyframes walkerLean {
+    0%, 100% { transform: translateY(0) rotate(0deg) translateX(0); }
+    50%      { transform: translateY(-3px) rotate(-8deg) translateX(-8px); }
   }
 
-  .walk-tishan {
-    left: -120px;
-    animation:
-      walkAcrossT 7s cubic-bezier(.4, 0, .6, 1) forwards,
-      walkBob 0.42s ease-in-out infinite;
+  /* Ammi — placed in biome 4 (scrolls into view) */
+  .ammi-waiting {
+    position: absolute;
+    bottom: 22vh;
+    left: 50vw;
+    width: 96px;
+    height: 132px;
+    z-index: 9;
+    filter: drop-shadow(0 8px 4px rgba(58, 36, 24, 0.25));
+    animation: ammiIdle 1.4s ease-in-out infinite;
+    transform-origin: 50% 100%;
   }
-  @keyframes walkAcrossT {
-    0%   { left: -120px; }
-    78%  { left: calc(50% - 60px); }
-    100% { left: calc(50% - 60px); }
-  }
-  @keyframes walkBob {
-    0%, 100% { transform: translateY(0) rotate(-1deg); }
-    50%      { transform: translateY(-4px) rotate(1deg); }
-  }
-
-  .walk-ammi {
-    right: calc(50% - 60px);
-    animation: idleBounce 1.2s ease-in-out infinite;
-  }
-  @keyframes idleBounce {
+  @keyframes ammiIdle {
     0%, 100% { transform: translateY(0)    rotate(-2deg); }
-    50%      { transform: translateY(-6px) rotate(2deg); }
+    50%      { transform: translateY(-5px) rotate(2deg); }
+  }
+  .ammi-waiting.met {
+    animation: ammiHug 1.2s ease-in-out infinite;
+  }
+  @keyframes ammiHug {
+    0%, 100% { transform: translateY(0) rotate(0deg) translateX(0); }
+    50%      { transform: translateY(-3px) rotate(8deg) translateX(8px); }
   }
 
-  .walk-stage.met .walk-tishan {
-    animation: walkBob 0.8s ease-in-out infinite, hugLean 1.2s ease-in-out infinite;
+  /* Captions, eyebrow, hearts burst */
+  .walk-eyebrow {
+    position: absolute;
+    top: 5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 0.7rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--paper);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: opacity 1.4s var(--ease) 0.3s;
+    z-index: 20;
   }
-  .walk-stage.met .walk-ammi {
-    animation: idleBounce 0.8s ease-in-out infinite, hugLeanRev 1.2s ease-in-out infinite;
+  .walk-eyebrow.show { opacity: 0.9; }
+
+  .walk-caption {
+    position: absolute;
+    bottom: 8vh;
+    left: 50%;
+    transform: translate(-50%, 12px);
+    font-family: "Caveat", cursive;
+    font-weight: 600;
+    font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+    color: var(--paper);
+    text-align: center;
+    text-shadow:
+      0 2px 12px rgba(0, 0, 0, 0.7),
+      0 0 30px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+    z-index: 20;
+    max-width: 80vw;
   }
-  @keyframes hugLean {
-    0%, 100% { transform: translateY(0) rotate(0deg) translateX(0); }
-    50%      { transform: translateY(-4px) rotate(8deg) translateX(8px); }
-  }
-  @keyframes hugLeanRev {
-    0%, 100% { transform: translateY(0) rotate(0deg) translateX(0); }
-    50%      { transform: translateY(-4px) rotate(-8deg) translateX(-8px); }
+  .walk-caption.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
   }
 
   .walk-hearts-burst {
     position: absolute;
-    inset: 0;
+    bottom: 28vh;
+    left: 50%;
+    width: 20px;
+    height: 20px;
     pointer-events: none;
-    z-index: 6;
+    z-index: 15;
   }
   .burst-heart {
     position: absolute;
@@ -578,54 +903,9 @@
     100% { opacity: 0; transform: translate(calc(var(--tx, 0) * 1.6), calc(var(--ty, -60px) * 2)) scale(0.7); }
   }
 
-  .walk-caption {
-    position: absolute;
-    bottom: 7vh;
-    left: 50%;
-    transform: translate(-50%, 12px);
-    font-family: "Caveat", cursive;
-    font-weight: 600;
-    font-size: clamp(1.6rem, 3.2vw, 2.4rem);
-    color: var(--ink);
-    text-align: center;
-    text-shadow: 0 2px 12px rgba(255, 246, 233, 0.7);
-    opacity: 0;
-    transition: opacity 1.6s var(--ease), transform 1.6s var(--ease);
-    z-index: 7;
-    max-width: 80vw;
-  }
-  .walk-caption.show {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-
-  .walk-eyebrow {
-    position: absolute;
-    top: 6vh;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: "Inter", sans-serif;
-    font-weight: 500;
-    font-size: 0.7rem;
-    letter-spacing: 0.5em;
-    text-transform: uppercase;
-    color: var(--coral);
-    text-shadow: 0 1px 6px rgba(255, 246, 233, 0.6);
-    opacity: 0;
-    transition: opacity 1.4s var(--ease) 0.3s;
-    z-index: 7;
-  }
-  .walk-eyebrow.show { opacity: 0.9; }
-
-  /* Pixel mountains via CSS clip-path */
-  .walk-mountain {
-    position: absolute;
-    bottom: 0;
-    background: var(--mc, #7d5d8a);
-    width: var(--mw, 25vw);
-    height: var(--mh, 12vh);
-    clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
-  }
+  /* Skip the dark vignette overlay during the adventure scene */
+  body.adventure .vignette { display: none; }
+  body.adventure .grain { opacity: 0.04; }
 
   /* ==================================================================
      Scene 4 — Care list
@@ -1361,32 +1641,78 @@
 <div class="day-tooltip" id="dayTooltip"></div>
 
 <!-- ================================================================
-     Scene — The walk (8-bit cinematic sunset)
+     Scene — The adventure (8-bit side-scrolling journey)
      ================================================================ -->
 <div class="scene" id="scene-walk">
-  <div class="walk-landscape">
-    <!-- mountains -->
-    <div class="walk-mountain" style="--mc:#5e3d6e; --mw:38vw; --mh:18vh; left: -8vw; bottom: 18vh;"></div>
-    <div class="walk-mountain" style="--mc:#a85a6e; --mw:30vw; --mh:14vh; left: 22vw; bottom: 18vh;"></div>
-    <div class="walk-mountain" style="--mc:#d77a5c; --mw:35vw; --mh:16vh; left: 50vw; bottom: 18vh;"></div>
-    <div class="walk-mountain" style="--mc:#6e436b; --mw:28vw; --mh:12vh; left: 78vw; bottom: 18vh;"></div>
-    <!-- sun -->
-    <div class="walk-sun"></div>
-    <!-- clouds -->
-    <div class="walk-cloud" style="top:14%; left:0; width:80px; height:24px; animation-duration: 80s;"></div>
-    <div class="walk-cloud" style="top:22%; left:0; width:120px; height:30px; animation-duration: 100s; animation-delay: -30s;"></div>
-    <div class="walk-cloud" style="top:8%;  left:0; width:60px;  height:18px; animation-duration: 70s;  animation-delay: -50s;"></div>
-    <!-- ground -->
-    <div class="walk-ground"></div>
+  <div class="adventure-world" id="adventureWorld">
+    <!-- BIOME 1 — Mountains at dawn -->
+    <div class="biome biome-1">
+      <div class="b-sun"></div>
+      <div class="b-mountain" style="--mc:#7d4a8c; --mw:42vw; --mh:22vh; left:-5vw;  bottom:18vh;"></div>
+      <div class="b-mountain" style="--mc:#a85a6e; --mw:34vw; --mh:18vh; left:25vw;  bottom:18vh;"></div>
+      <div class="b-mountain" style="--mc:#d77a5c; --mw:38vw; --mh:20vh; left:55vw;  bottom:18vh;"></div>
+      <div class="b-mountain" style="--mc:#6e436b; --mw:30vw; --mh:14vh; left:82vw;  bottom:18vh;"></div>
+      <div class="b-bird" style="top:25%; left:30vw; animation: drift 18s linear infinite;"></div>
+      <div class="b-bird" style="top:30%; left:32vw; animation: drift 18s linear infinite -3s;"></div>
+      <div class="b-ground grass"></div>
+    </div>
+
+    <!-- BIOME 2 — Forest -->
+    <div class="biome biome-2">
+      <div class="b-tree" style="--tw:60px; --th:130px; --canopy:#3d6e3a; --canopy-shadow:#28492a; --canopy-light:#5a8c4c; left:8vw;"></div>
+      <div class="b-tree" style="--tw:80px; --th:170px; --canopy:#2c5e30; --canopy-shadow:#1c4220; --canopy-light:#4a7c3c; left:24vw;"></div>
+      <div class="b-tree" style="--tw:50px; --th:110px; --canopy:#5a8c4c; --canopy-shadow:#3a6a30; --canopy-light:#7caa60; left:42vw;"></div>
+      <div class="b-tree" style="--tw:70px; --th:150px; --canopy:#3d6e3a; --canopy-shadow:#28492a; --canopy-light:#5a8c4c; left:62vw;"></div>
+      <div class="b-tree" style="--tw:90px; --th:180px; --canopy:#2c5e30; --canopy-shadow:#1c4220; --canopy-light:#4a7c3c; left:80vw;"></div>
+      <div class="b-butterfly" style="--bc:#f06888; --fd:6s; top:40%; left:30vw;"></div>
+      <div class="b-butterfly" style="--bc:#ffd36b; --fd:5s; top:45%; left:55vw;"></div>
+      <div class="b-butterfly" style="--bc:#ff8c6b; --fd:7s; top:38%; left:75vw;"></div>
+      <div class="b-ground forest-floor"></div>
+    </div>
+
+    <!-- BIOME 3 — Coast -->
+    <div class="biome biome-3">
+      <div class="b-bird" style="top:18%; left:20vw; animation: drift 15s linear infinite;"></div>
+      <div class="b-bird" style="top:22%; left:50vw; animation: drift 17s linear infinite -7s;"></div>
+      <div class="b-boat" style="left:65vw;"></div>
+      <div class="b-boat" style="left:35vw; transform: scale(0.7);"></div>
+      <div class="b-ocean"></div>
+      <div class="b-ground sand"></div>
+    </div>
+
+    <!-- BIOME 4 — Home garden where Ammi waits -->
+    <div class="biome biome-4">
+      <div class="b-twinkle" style="top:8%;  left:15vw;"></div>
+      <div class="b-twinkle" style="top:12%; left:30vw; animation-delay: -1s;"></div>
+      <div class="b-twinkle" style="top:6%;  left:60vw; animation-delay: -2s;"></div>
+      <div class="b-twinkle" style="top:14%; left:75vw; animation-delay: -1.5s;"></div>
+      <div class="b-twinkle" style="top:10%; left:85vw; animation-delay: -2.5s;"></div>
+
+      <div class="b-bigtree"></div>
+
+      <div class="ammi-waiting" id="walkAmmi"></div>
+
+      <div class="b-flower" style="--fc:#f06888; left:22vw;"></div>
+      <div class="b-flower" style="--fc:#ff8c6b; left:30vw;"></div>
+      <div class="b-flower" style="--fc:#ffd36b; left:38vw;"></div>
+      <div class="b-flower" style="--fc:#ffb3c1; left:62vw;"></div>
+      <div class="b-flower" style="--fc:#f06888; left:70vw;"></div>
+      <div class="b-flower" style="--fc:#ff8c6b; left:78vw;"></div>
+      <div class="b-flower" style="--fc:#ffd36b; left:86vw;"></div>
+
+      <div class="b-ground dusk-grass"></div>
+    </div>
   </div>
 
-  <div class="walk-eyebrow" id="walkEyebrow">viii · the distance</div>
-  <div class="walk-stage" id="walkStage">
-    <div class="walk-tishan" id="walkTishan"></div>
-    <div class="walk-ammi"   id="walkAmmi"></div>
-    <div class="walk-hearts-burst" id="walkHearts"></div>
+  <!-- Tishan walks in the foreground, fixed in viewport -->
+  <div class="walker walk-bob" id="walkTishan">
+    <div class="frame a" id="walkTishanA"></div>
+    <div class="frame b" id="walkTishanB"></div>
   </div>
-  <div class="walk-caption" id="walkCaption">i'd cross any distance to get back to you.</div>
+
+  <div class="walk-eyebrow" id="walkEyebrow">viii · the journey home</div>
+  <div class="walk-caption" id="walkCaption"></div>
+  <div class="walk-hearts-burst" id="walkHearts"></div>
   <div class="continue" id="walkContinue" data-hover>continue</div>
 </div>
 
@@ -1554,6 +1880,7 @@ function showScene(i) {
   current = i;
   document.getElementById("homeLink").classList.toggle("show", i > 0);
   document.body.classList.toggle("night", !!SCENES[i].night);
+  document.body.classList.toggle("adventure", SCENES[i].id === "scene-walk");
   SCENES[i].init();
   setTimeout(() => { advancing = false; }, 600);
 }
@@ -1635,6 +1962,32 @@ sbbbbbbbbbbbbbbs
 ..pppp....pppp..
 ..pppp....pppp..
 ..gggg....gggg..
+................
+`;
+
+// Tishan walking — Frame B (legs together / mid-step)
+const TISHAN_STEP = `
+.....kkkkkk.....
+....kkkkkkkk....
+...kkssssssskk..
+..kssssssssssk..
+..ksesssssessk..
+..kssssssssssk..
+..ksssrrsssssk..
+..kkssssssssskk.
+...kkkkkkkkkk...
+.....ssssss.....
+..sbbbbbbbbbbs..
+sbbbbbbbbbbbbbbs
+sbbbbbbbbbbbbbbs
+.sbbbbbbbbbbbbs.
+..bbbbbbbbbbbb..
+..pppppppppppp..
+....pppppppp....
+....pppppppp....
+....pppppppp....
+....pppppppp....
+....gggggggg....
 ................
 `;
 
@@ -1927,76 +2280,114 @@ function init365() {
 }
 
 /* ==========================================================
-   Walk scene — Tishan walks across to Ammi
+   Walk scene — 8-bit side-scrolling adventure
    ========================================================== */
 let walkInit = false;
+let walkTimers = [];
+
+const ADVENTURE_CAPTIONS = [
+  { t: 600,   text: "to find my way back to you..." },
+  { t: 5500,  text: "i'd cross every forest..." },
+  { t: 11000, text: "swim every sea..." },
+  { t: 16500, text: "and walk every step home." },
+];
+
+function clearWalkTimers() {
+  walkTimers.forEach(clearTimeout);
+  walkTimers = [];
+}
+function wt(fn, ms) { walkTimers.push(setTimeout(fn, ms)); }
+
 function initWalk() {
-  const stage = document.getElementById("walkStage");
+  document.body.classList.add("adventure");
+
+  const world = document.getElementById("adventureWorld");
   const eyebrow = document.getElementById("walkEyebrow");
   const caption = document.getElementById("walkCaption");
   const cont = document.getElementById("walkContinue");
   const heartsBurst = document.getElementById("walkHearts");
+  const walker = document.getElementById("walkTishan");
+  const ammi = document.getElementById("walkAmmi");
 
   // Render sprites (idempotent)
   if (!walkInit) {
     walkInit = true;
-    document.getElementById("walkTishan").innerHTML = pixelArt(TISHAN_SPRITE, 6);
-    document.getElementById("walkAmmi").innerHTML   = pixelArt(AMMI_SPRITE,   6);
+    document.getElementById("walkTishanA").innerHTML = pixelArt(TISHAN_SPRITE, 6);
+    document.getElementById("walkTishanB").innerHTML = pixelArt(TISHAN_STEP,   6);
+    document.getElementById("walkAmmi").innerHTML    = pixelArt(AMMI_SPRITE,   6);
   }
 
   // Reset state for re-entry
-  stage.classList.remove("met");
+  clearWalkTimers();
   eyebrow.classList.remove("show");
   caption.classList.remove("show");
   cont.classList.remove("show");
   heartsBurst.innerHTML = "";
+  walker.classList.remove("arrived");
+  walker.classList.add("walk-bob");
+  ammi.classList.remove("met");
 
-  // Restart the walk animation by force-reflowing the element
-  const tishan = document.getElementById("walkTishan");
-  tishan.style.animation = "none";
-  void tishan.offsetWidth;
-  tishan.style.animation = "";
+  // Force-reflow to restart the world scroll animation
+  world.classList.remove("go");
+  void world.offsetWidth;
+  world.classList.add("go");
 
-  // Reveal eyebrow immediately
-  setTimeout(() => eyebrow.classList.add("show"), 600);
+  // Reveal eyebrow
+  wt(() => eyebrow.classList.add("show"), 600);
 
-  // After Tishan reaches Ammi (~5.5s), trigger the meet
-  setTimeout(() => {
-    stage.classList.add("met");
+  // Cycle captions across biomes
+  ADVENTURE_CAPTIONS.forEach(({ t, text }) => {
+    wt(() => {
+      caption.classList.remove("show");
+      wt(() => {
+        caption.textContent = text;
+        caption.classList.add("show");
+      }, 400);
+    }, t);
+  });
+
+  // World scrolls for 22s. Tishan reaches Ammi at the end.
+  // ~21s — meet
+  wt(() => {
+    walker.classList.remove("walk-bob");
+    walker.classList.add("arrived");
+    ammi.classList.add("met");
     burstWalkHearts();
-  }, 5500);
+  }, 21000);
 
-  // Caption appears after meet
-  setTimeout(() => caption.classList.add("show"), 6300);
+  // Final caption locks in
+  wt(() => {
+    caption.classList.remove("show");
+    wt(() => {
+      caption.textContent = "you. always you.";
+      caption.classList.add("show");
+    }, 400);
+  }, 22500);
 
   // Continue button
-  setTimeout(() => cont.classList.add("show"), 8000);
+  wt(() => cont.classList.add("show"), 24000);
 }
 
 function burstWalkHearts() {
   const container = document.getElementById("walkHearts");
-  const stage = document.getElementById("walkStage");
-  const rect = stage.getBoundingClientRect();
-  const cx = rect.width / 2;
-  const cy = rect.height * 0.4;
   const COLORS = ["#ff8c6b", "#f06888", "#ffb3c1", "#ffd36b", "#f5a623"];
-  const HEARTS = ["♥", "❀", "✿", "♥"];
-  for (let i = 0; i < 24; i++) {
+  const HEARTS = ["♥", "❀", "✿", "♥", "♥"];
+  for (let i = 0; i < 30; i++) {
     setTimeout(() => {
       const h = document.createElement("div");
       h.className = "burst-heart";
       h.textContent = HEARTS[(Math.random() * HEARTS.length) | 0];
-      h.style.left = cx + "px";
-      h.style.top = cy + "px";
+      h.style.left = "0px";
+      h.style.top = "0px";
       h.style.color = COLORS[(Math.random() * COLORS.length) | 0];
-      h.style.fontSize = (14 + Math.random() * 14) + "px";
+      h.style.fontSize = (16 + Math.random() * 16) + "px";
       const angle = Math.random() * Math.PI * 2;
-      const dist = 60 + Math.random() * 80;
+      const dist = 80 + Math.random() * 100;
       h.style.setProperty("--tx", Math.cos(angle) * dist + "px");
-      h.style.setProperty("--ty", (-Math.abs(Math.sin(angle)) * dist - 20) + "px");
+      h.style.setProperty("--ty", (-Math.abs(Math.sin(angle)) * dist - 30) + "px");
       container.appendChild(h);
       setTimeout(() => h.remove(), 1700);
-    }, i * 60);
+    }, i * 55);
   }
 }
 
