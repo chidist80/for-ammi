@@ -778,6 +778,174 @@
     50%      { opacity: 1; }
   }
 
+  /* Drifting clouds — biome 1 atmosphere */
+  .b-cloud {
+    position: absolute;
+    background: rgba(255, 250, 235, 0.85);
+    border-radius: 50%;
+    filter: blur(1px);
+    box-shadow:
+      14px 4px 0 -2px rgba(255, 250, 235, 0.85),
+      -14px 6px 0 -3px rgba(255, 250, 235, 0.8),
+      0 -6px 0 -4px rgba(255, 250, 235, 0.7);
+    animation: cloudDrift var(--cd, 60s) linear infinite;
+  }
+  @keyframes cloudDrift {
+    from { transform: translateX(0); }
+    to   { transform: translateX(20vw); }
+  }
+
+  /* Forest godrays slanting through trees */
+  .b-rays {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70%;
+    background:
+      linear-gradient(105deg,
+        transparent 20%,
+        rgba(255, 240, 200, 0.18) 30%,
+        transparent 32%,
+        transparent 48%,
+        rgba(255, 240, 200, 0.14) 56%,
+        transparent 58%,
+        transparent 72%,
+        rgba(255, 240, 200, 0.16) 80%,
+        transparent 82%);
+    pointer-events: none;
+    mix-blend-mode: screen;
+    animation: raysShimmer 6s ease-in-out infinite alternate;
+  }
+  @keyframes raysShimmer {
+    from { opacity: 0.6; }
+    to   { opacity: 1; }
+  }
+
+  /* Fireflies — biome 2 + 4 */
+  .b-firefly {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #fff4a8;
+    box-shadow: 0 0 8px #fff4a8, 0 0 18px rgba(255, 244, 168, 0.6);
+    animation:
+      fireflyDance var(--ff-d, 7s) ease-in-out infinite,
+      fireflyBlink 1.4s ease-in-out infinite;
+  }
+  @keyframes fireflyBlink {
+    0%, 100% { opacity: 0.2; }
+    50%      { opacity: 1; }
+  }
+  @keyframes fireflyDance {
+    0%   { transform: translate(0, 0); }
+    33%  { transform: translate(-22px, -18px); }
+    66%  { transform: translate(18px, -10px); }
+    100% { transform: translate(0, 0); }
+  }
+
+  /* Coastal lighthouse */
+  .b-lighthouse {
+    position: absolute;
+    bottom: 18vh;
+    left: 88vw;
+    width: 28px;
+    height: 80px;
+  }
+  .b-lighthouse::before {
+    /* Tower body */
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 64px;
+    background:
+      linear-gradient(0deg,
+        #fff0d6 0%, #fff0d6 25%,
+        #d44848 25%, #d44848 50%,
+        #fff0d6 50%, #fff0d6 75%,
+        #d44848 75%, #d44848 100%);
+    box-shadow: inset -2px 0 0 rgba(0,0,0,0.2);
+  }
+  .b-lighthouse::after {
+    /* Light dome */
+    content: "";
+    position: absolute;
+    bottom: 64px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 14px;
+    height: 14px;
+    background: radial-gradient(circle, #fff8d6, #ffce6e 60%, #d96a48 100%);
+    border-radius: 50% 50% 0 0;
+    box-shadow:
+      0 0 20px rgba(255, 217, 128, 0.8),
+      0 0 60px rgba(255, 200, 100, 0.5);
+    animation: beaconPulse 1.6s ease-in-out infinite alternate;
+  }
+  @keyframes beaconPulse {
+    from { box-shadow: 0 0 20px rgba(255, 217, 128, 0.8), 0 0 60px rgba(255, 200, 100, 0.5); }
+    to   { box-shadow: 0 0 35px rgba(255, 217, 128, 1),   0 0 100px rgba(255, 200, 100, 0.8); }
+  }
+
+  /* Sun reflection on water — coast */
+  .b-sun-glint {
+    position: absolute;
+    bottom: 18vh;
+    left: 0;
+    right: 0;
+    height: 22vh;
+    background:
+      radial-gradient(ellipse 30% 60% at 70% 0%, rgba(255, 240, 200, 0.55) 0%, transparent 60%);
+    pointer-events: none;
+    animation: glintShimmer 3s ease-in-out infinite alternate;
+  }
+  @keyframes glintShimmer {
+    from { opacity: 0.7; }
+    to   { opacity: 1; }
+  }
+
+  /* Distant Ammi silhouette under the big tree — visible across biome 4 approach */
+  .b-ammi-distant {
+    position: absolute;
+    bottom: 22vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 30px;
+    z-index: 2;
+    background: #1a0e22;
+    clip-path: polygon(40% 0%, 60% 0%, 60% 30%, 80% 30%, 80% 90%, 60% 90%, 60% 100%, 40% 100%, 40% 90%, 20% 90%, 20% 30%, 40% 30%);
+    opacity: 0;
+    animation: distantAmmiReveal 12s ease-out forwards;
+    animation-delay: 0s;
+    filter: drop-shadow(0 0 8px rgba(255, 217, 128, 0.6));
+  }
+  @keyframes distantAmmiReveal {
+    0%   { opacity: 0; transform: translateX(-50%) scale(0.6); }
+    40%  { opacity: 0.4; transform: translateX(-50%) scale(0.8); }
+    100% { opacity: 0.85; transform: translateX(-50%) scale(1); }
+  }
+  /* A small heart pulses above the distant silhouette */
+  .b-ammi-distant::after {
+    content: "♥";
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ff8c6b;
+    font-size: 12px;
+    text-shadow: 0 0 8px rgba(255, 140, 107, 0.8);
+    animation: heartPulse 1.2s ease-in-out infinite;
+  }
+  @keyframes heartPulse {
+    0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+    50%      { opacity: 1;   transform: translateX(-50%) scale(1.3); }
+  }
+
   /* The Walker — Tishan, fixed in viewport, walking */
   .walker {
     position: absolute;
@@ -1100,6 +1268,58 @@
   @keyframes smokeWisp {
     0%   { transform: scaleX(0.4); opacity: 0.9; }
     100% { transform: scaleX(1.6) translateX(-30px); opacity: 0; }
+  }
+
+  /* Banner trailing the plane — "happy mother's day" */
+  .sky-bigplane .banner {
+    position: absolute;
+    top: 35%;
+    left: -260px;
+    width: 240px;
+    height: 36px;
+    background: linear-gradient(180deg, #ffd36b 0%, #ffb878 100%);
+    border: 2px solid #1a0e22;
+    border-radius: 4px;
+    box-shadow:
+      inset 0 -3px 0 rgba(0,0,0,0.18),
+      0 6px 0 rgba(0,0,0,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    color: #6b2a4a;
+    text-transform: lowercase;
+    transform-origin: 100% 50%;
+    animation: bannerWave 1.4s ease-in-out infinite;
+  }
+  .sky-bigplane .banner::before {
+    /* Tow rope back to plane */
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -22px;
+    width: 22px;
+    height: 1.5px;
+    background: rgba(0,0,0,0.55);
+    transform-origin: 100% 50%;
+  }
+  .sky-bigplane .banner::after {
+    /* Pennant tail */
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -14px;
+    width: 16px;
+    height: 100%;
+    background: linear-gradient(180deg, #ff8c6b 0%, #d96978 100%);
+    clip-path: polygon(100% 0%, 30% 50%, 100% 100%);
+  }
+  @keyframes bannerWave {
+    0%, 100% { transform: rotate(-2deg) translateY(0); }
+    50%      { transform: rotate(2deg)  translateY(-3px); }
   }
 
   /* Walkers transformed up to ride the plane (calc lifts them to plane door regardless of viewport) */
@@ -1962,11 +2182,51 @@
     border-radius: 50% 50% 20% 20%;
     animation: blossomFall var(--td, 7s) linear infinite;
     opacity: 0.85;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
   }
   @keyframes blossomFall {
-    0%   { transform: translateY(-10vh) rotate(0deg); }
-    100% { transform: translateY(110vh) rotate(540deg); }
+    0%   { transform: translateY(-10vh) translateX(0)     rotate(0deg); }
+    50%  { transform: translateY(50vh)  translateX(10px)  rotate(270deg); }
+    100% { transform: translateY(110vh) translateX(-6px)  rotate(540deg); }
   }
+  /* Storm-mode petals: many more, falling faster, sweeping sideways */
+  .trot-tokyo.storm .tk-petal {
+    animation-duration: calc(var(--td, 7s) * 0.45);
+  }
+  .trot-tokyo.storm .tk-storm-petal {
+    animation-duration: 2.4s !important;
+  }
+  .tk-storm-petal {
+    position: absolute;
+    width: 10px;
+    height: 12px;
+    background: var(--pc, #ffb3c1);
+    border-radius: 50% 50% 20% 20%;
+    opacity: 0;
+    pointer-events: none;
+    animation: stormPetalFall 3s linear infinite;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.18));
+  }
+  .trot-tokyo.storm .tk-storm-petal { opacity: 0.95; }
+  @keyframes stormPetalFall {
+    0%   { transform: translateY(-15vh) translateX(0)    rotate(0deg)   scale(0.8); }
+    35%  { transform: translateY(35vh)  translateX(-30px) rotate(180deg) scale(1); }
+    70%  { transform: translateY(70vh)  translateX(35px)  rotate(360deg) scale(1); }
+    100% { transform: translateY(115vh) translateX(-12px) rotate(540deg) scale(0.85); }
+  }
+  /* Subtle wind glow that sweeps through during the storm */
+  .tk-wind {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 90% 50% at 50% 50%,
+        rgba(255, 200, 220, 0.25) 0%,
+        transparent 60%);
+    opacity: 0;
+    transition: opacity 1.4s ease-out;
+  }
+  .trot-tokyo.storm .tk-wind { opacity: 1; }
   .tk-lantern-string {
     position: absolute;
     top: 12%;
@@ -2075,6 +2335,12 @@
   .trot-skydiving {
     background: linear-gradient(180deg,
       #6cb5e8 0%, #a8d4f0 50%, #d4ecf5 100%);
+    transition: background 4.6s ease-in;
+  }
+  /* Warmer sky as they fall — golden-hour by the time chutes pop */
+  .trot-skydiving.warm-sky {
+    background: linear-gradient(180deg,
+      #6e6caa 0%, #ff8c6b 35%, #ffce6e 65%, #ffe1a3 90%, #fff0d6 100%);
   }
   .trot-skydiving .speed-lines {
     position: absolute;
@@ -2363,6 +2629,171 @@
     transition: opacity 4s var(--ease-soft);
   }
   .dusk-veil.show { opacity: 1; }
+
+  /* White-out flash for emotional beats — embrace, parachute pop, finale */
+  .walk-flash {
+    position: absolute;
+    inset: 0;
+    z-index: 30;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 240, 220, 0.7) 30%,
+      transparent 70%);
+    opacity: 0;
+  }
+  .walk-flash.flash {
+    animation: flashPulse 0.9s ease-out forwards;
+  }
+  @keyframes flashPulse {
+    0%   { opacity: 0; transform: scale(0.6); }
+    20%  { opacity: 1; transform: scale(1.05); }
+    100% { opacity: 0; transform: scale(1.4); }
+  }
+
+  /* Iris wipe — circular reveal between trot scenes */
+  .iris-wipe {
+    position: absolute;
+    inset: 0;
+    z-index: 25;
+    pointer-events: none;
+    background: #1a0e22;
+    clip-path: circle(150% at 50% 50%);
+    opacity: 0;
+  }
+  .iris-wipe.closing {
+    opacity: 1;
+    animation: irisClose 0.55s cubic-bezier(.5,.0,.7,1) forwards;
+  }
+  .iris-wipe.opening {
+    opacity: 1;
+    animation: irisOpen 0.7s cubic-bezier(.3,.7,.4,1) forwards;
+  }
+  @keyframes irisClose {
+    0%   { clip-path: circle(150% at 50% 55%); }
+    100% { clip-path: circle(0%   at 50% 55%); }
+  }
+  @keyframes irisOpen {
+    0%   { clip-path: circle(0%   at 50% 55%); }
+    100% { clip-path: circle(150% at 50% 55%); opacity: 0; }
+  }
+
+  /* Slow approach pose — Tishan's footsteps slow and bob softens */
+  .walker.approaching {
+    animation: walkerApproach 0.8s ease-in-out infinite !important;
+  }
+  .walker.approaching .frame.a { animation: stepSwap 0.6s steps(1) infinite; }
+  .walker.approaching .frame.b { animation: stepSwap 0.6s steps(1) infinite reverse; }
+  @keyframes walkerApproach {
+    0%, 100% { transform: translateY(0)    rotate(0deg); }
+    50%      { transform: translateY(-2px) rotate(0deg); }
+  }
+
+  /* Embrace pose — both lean into each other with rotation */
+  .walker.embracing {
+    animation: walkerEmbrace 1.4s ease-in-out infinite !important;
+  }
+  .ammi-waiting.embracing {
+    animation: ammiEmbrace 1.4s ease-in-out infinite !important;
+  }
+  @keyframes walkerEmbrace {
+    0%, 100% { transform: translateY(-2px) rotate(-12deg) translateX(-10px); }
+    50%      { transform: translateY(-5px) rotate(-8deg)  translateX(-7px); }
+  }
+  @keyframes ammiEmbrace {
+    0%, 100% { transform: translateY(-2px) rotate(12deg)  translateX(10px); }
+    50%      { transform: translateY(-5px) rotate(8deg)   translateX(7px); }
+  }
+  /* Slow waltz — gentle sway with longer hold, steps swapping slowly */
+  .walker.waltz {
+    animation: waltzTishan 3.6s ease-in-out infinite !important;
+  }
+  .walker.waltz .frame.a { animation: stepSwap 1.8s steps(1) infinite; }
+  .walker.waltz .frame.b { animation: stepSwap 1.8s steps(1) infinite reverse; }
+  @keyframes waltzTishan {
+    0%, 100% { transform: translateY(-1px) rotate(6deg)  translateX(4px); }
+    50%      { transform: translateY(-5px) rotate(-6deg) translateX(-4px); }
+  }
+  .ammi-waiting.waltz {
+    animation: waltzAmmi 3.6s ease-in-out infinite !important;
+  }
+  .ammi-waiting.waltz .frame.a { animation: stepSwap 1.8s steps(1) infinite; }
+  .ammi-waiting.waltz .frame.b { animation: stepSwap 1.8s steps(1) infinite reverse; }
+  @keyframes waltzAmmi {
+    0%, 100% { transform: translateY(-1px) rotate(-6deg) translateX(-4px); }
+    50%      { transform: translateY(-5px) rotate(6deg)  translateX(4px); }
+  }
+
+  /* Rising moon for the finale */
+  .home-moon {
+    position: absolute;
+    bottom: -120px;
+    right: 18%;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff8d6, #f5e6a8 60%, #d4c280 100%);
+    box-shadow:
+      0 0 60px rgba(255, 248, 214, 0.6),
+      0 0 140px rgba(255, 248, 214, 0.35);
+    z-index: 6;
+    opacity: 0;
+    pointer-events: none;
+    /* tiny crater details */
+    background-image:
+      radial-gradient(circle at 28% 38%, rgba(0,0,0,0.06) 0%, transparent 30%),
+      radial-gradient(circle at 65% 56%, rgba(0,0,0,0.05) 0%, transparent 22%),
+      radial-gradient(circle at 45% 70%, rgba(0,0,0,0.05) 0%, transparent 20%);
+    background-blend-mode: multiply;
+  }
+  .home-moon.rising {
+    animation: moonRise 6s cubic-bezier(.4,0,.2,1) forwards, moonGlow 5s ease-in-out 6s infinite alternate;
+  }
+  @keyframes moonRise {
+    0%   { bottom: -120px; opacity: 0; }
+    20%  { opacity: 1; }
+    100% { bottom: 56vh;  opacity: 1; }
+  }
+  @keyframes moonGlow {
+    from { box-shadow: 0 0 60px rgba(255, 248, 214, 0.6),  0 0 140px rgba(255, 248, 214, 0.35); }
+    to   { box-shadow: 0 0 90px rgba(255, 248, 214, 0.85), 0 0 200px rgba(255, 248, 214, 0.55); }
+  }
+
+  /* Final caption gets bigger and gentler */
+  .walk-caption.finale {
+    font-size: clamp(1.6rem, 3.6vw, 2.6rem) !important;
+    letter-spacing: 0.08em !important;
+    text-shadow:
+      0 2px 24px rgba(0, 0, 0, 0.6),
+      0 0 40px rgba(255, 217, 168, 0.5) !important;
+  }
+
+  /* A glowing aura around the embracing pair */
+  .embrace-glow {
+    position: absolute;
+    bottom: 18vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    height: 320px;
+    pointer-events: none;
+    z-index: 10;
+    background: radial-gradient(circle,
+      rgba(255, 200, 160, 0.45) 0%,
+      rgba(255, 150, 130, 0.25) 35%,
+      transparent 70%);
+    opacity: 0;
+    border-radius: 50%;
+    filter: blur(8px);
+  }
+  .embrace-glow.show {
+    animation: embraceGlow 3.6s ease-out forwards;
+  }
+  @keyframes embraceGlow {
+    0%   { opacity: 0; transform: translateX(-50%) scale(0.4); }
+    25%  { opacity: 1; transform: translateX(-50%) scale(1.1); }
+    100% { opacity: 0; transform: translateX(-50%) scale(1.4); }
+  }
 
   /* Stars that appear above the dance */
   .dance-star {
@@ -3539,17 +3970,23 @@
     <!-- BIOME 1 — Mountains at dawn -->
     <div class="biome biome-1">
       <div class="b-sun"></div>
+      <!-- Drifting clouds -->
+      <div class="b-cloud" style="top:14%; left:8vw;  width:60px; height:18px; --cd:65s;"></div>
+      <div class="b-cloud" style="top:8%;  left:42vw; width:80px; height:22px; --cd:80s;"></div>
+      <div class="b-cloud" style="top:18%; left:75vw; width:50px; height:14px; --cd:55s;"></div>
       <div class="b-mountain" style="--mc:#7d4a8c; --mw:42vw; --mh:22vh; left:-5vw;  bottom:18vh;"></div>
       <div class="b-mountain" style="--mc:#a85a6e; --mw:34vw; --mh:18vh; left:25vw;  bottom:18vh;"></div>
       <div class="b-mountain" style="--mc:#d77a5c; --mw:38vw; --mh:20vh; left:55vw;  bottom:18vh;"></div>
       <div class="b-mountain" style="--mc:#6e436b; --mw:30vw; --mh:14vh; left:82vw;  bottom:18vh;"></div>
       <div class="b-bird" style="top:25%; left:30vw; animation: drift 18s linear infinite;"></div>
       <div class="b-bird" style="top:30%; left:32vw; animation: drift 18s linear infinite -3s;"></div>
+      <div class="b-bird" style="top:22%; left:65vw; animation: drift 22s linear infinite -8s;"></div>
       <div class="b-ground grass"></div>
     </div>
 
     <!-- BIOME 2 — Forest -->
     <div class="biome biome-2">
+      <div class="b-rays"></div>
       <div class="b-tree" style="--tw:60px; --th:130px; --canopy:#3d6e3a; --canopy-shadow:#28492a; --canopy-light:#5a8c4c; left:8vw;"></div>
       <div class="b-tree" style="--tw:80px; --th:170px; --canopy:#2c5e30; --canopy-shadow:#1c4220; --canopy-light:#4a7c3c; left:24vw;"></div>
       <div class="b-tree" style="--tw:50px; --th:110px; --canopy:#5a8c4c; --canopy-shadow:#3a6a30; --canopy-light:#7caa60; left:42vw;"></div>
@@ -3558,6 +3995,12 @@
       <div class="b-butterfly" style="--bc:#f06888; --fd:6s; top:40%; left:30vw;"></div>
       <div class="b-butterfly" style="--bc:#ffd36b; --fd:5s; top:45%; left:55vw;"></div>
       <div class="b-butterfly" style="--bc:#ff8c6b; --fd:7s; top:38%; left:75vw;"></div>
+      <!-- Fireflies twinkle between the trees -->
+      <div class="b-firefly" style="top:55%; left:18vw; --ff-d:6s;"></div>
+      <div class="b-firefly" style="top:50%; left:38vw; --ff-d:8s; animation-delay: -2s;"></div>
+      <div class="b-firefly" style="top:60%; left:58vw; --ff-d:7s; animation-delay: -3s;"></div>
+      <div class="b-firefly" style="top:48%; left:72vw; --ff-d:9s; animation-delay: -1s;"></div>
+      <div class="b-firefly" style="top:62%; left:88vw; --ff-d:6s; animation-delay: -4s;"></div>
       <div class="b-ground forest-floor"></div>
     </div>
 
@@ -3565,9 +4008,12 @@
     <div class="biome biome-3">
       <div class="b-bird" style="top:18%; left:20vw; animation: drift 15s linear infinite;"></div>
       <div class="b-bird" style="top:22%; left:50vw; animation: drift 17s linear infinite -7s;"></div>
+      <div class="b-bird" style="top:14%; left:75vw; animation: drift 14s linear infinite -2s;"></div>
       <div class="b-boat" style="left:65vw;"></div>
       <div class="b-boat" style="left:35vw; transform: scale(0.7);"></div>
+      <div class="b-lighthouse"></div>
       <div class="b-ocean"></div>
+      <div class="b-sun-glint"></div>
       <div class="b-ground sand"></div>
     </div>
 
@@ -3578,8 +4024,13 @@
       <div class="b-twinkle" style="top:6%;  left:60vw; animation-delay: -2s;"></div>
       <div class="b-twinkle" style="top:14%; left:75vw; animation-delay: -1.5s;"></div>
       <div class="b-twinkle" style="top:10%; left:85vw; animation-delay: -2.5s;"></div>
+      <div class="b-twinkle" style="top:5%;  left:42vw; animation-delay: -0.5s;"></div>
+      <div class="b-twinkle" style="top:18%; left:8vw;  animation-delay: -2.2s;"></div>
+      <div class="b-twinkle" style="top:9%;  left:50vw; animation-delay: -1.8s;"></div>
 
       <div class="b-bigtree"></div>
+      <!-- Distant Ammi silhouette waiting under the tree, growing visible as we approach -->
+      <div class="b-ammi-distant"></div>
 
       <div class="b-flower" style="--fc:#f06888; left:22vw;"></div>
       <div class="b-flower" style="--fc:#ff8c6b; left:30vw;"></div>
@@ -3588,6 +4039,13 @@
       <div class="b-flower" style="--fc:#f06888; left:70vw;"></div>
       <div class="b-flower" style="--fc:#ff8c6b; left:78vw;"></div>
       <div class="b-flower" style="--fc:#ffd36b; left:86vw;"></div>
+
+      <!-- Garden fireflies dancing among the flowers -->
+      <div class="b-firefly" style="bottom:20vh; left:24vw; --ff-d:7s;"></div>
+      <div class="b-firefly" style="bottom:24vh; left:34vw; --ff-d:9s; animation-delay: -1s;"></div>
+      <div class="b-firefly" style="bottom:22vh; left:64vw; --ff-d:8s; animation-delay: -3s;"></div>
+      <div class="b-firefly" style="bottom:25vh; left:74vw; --ff-d:6s; animation-delay: -2s;"></div>
+      <div class="b-firefly" style="bottom:20vh; left:84vw; --ff-d:7s; animation-delay: -4s;"></div>
 
       <div class="b-ground dusk-grass"></div>
     </div>
@@ -3604,6 +4062,9 @@
     <div class="frame a" id="walkTishanA"></div>
     <div class="frame b" id="walkTishanB"></div>
   </div>
+
+  <!-- Soft glow that blooms around the pair when they embrace -->
+  <div class="embrace-glow" id="embraceGlow"></div>
 
   <!-- ===== GLOBE-TROT OVERLAY ===== -->
   <div class="globe-trot-overlay" id="globeTrot">
@@ -3680,6 +4141,7 @@
 
       <!-- BIG plane — characters jump out of this -->
       <div class="sky-bigplane" id="skyBigplane">
+        <div class="banner">happy mother's day ♥</div>
         <div class="smoke"></div>
         <div class="tail"></div>
         <div class="body"></div>
@@ -3883,11 +4345,32 @@
       <div class="tk-petal" style="left:78%; --pc:#ffd6e0; --ps:8px;  --td:9s;   animation-delay:-5s;"></div>
       <div class="tk-petal" style="left:86%; --pc:#ffb3c1; --ps:10px; --td:7.5s; animation-delay:-2.8s;"></div>
       <div class="tk-petal" style="left:94%; --pc:#ff8c6b; --ps:9px;  --td:8s;   animation-delay:-4.2s;"></div>
+
+      <!-- Storm petals — only visible during the .storm climax -->
+      <div class="tk-storm-petal" style="left:3%;  top:-15vh; --pc:#ffb3c1; animation-delay:-0.2s;"></div>
+      <div class="tk-storm-petal" style="left:11%; top:-12vh; --pc:#f06888; animation-delay:-0.7s;"></div>
+      <div class="tk-storm-petal" style="left:18%; top:-18vh; --pc:#ffd6e0; animation-delay:-1.4s;"></div>
+      <div class="tk-storm-petal" style="left:26%; top:-10vh; --pc:#ffb3c1; animation-delay:-2s;"></div>
+      <div class="tk-storm-petal" style="left:34%; top:-16vh; --pc:#ff8c6b; animation-delay:-0.5s;"></div>
+      <div class="tk-storm-petal" style="left:42%; top:-13vh; --pc:#f06888; animation-delay:-1.1s;"></div>
+      <div class="tk-storm-petal" style="left:50%; top:-19vh; --pc:#ffd6e0; animation-delay:-1.8s;"></div>
+      <div class="tk-storm-petal" style="left:58%; top:-11vh; --pc:#ffb3c1; animation-delay:-0.3s;"></div>
+      <div class="tk-storm-petal" style="left:66%; top:-15vh; --pc:#f06888; animation-delay:-2.2s;"></div>
+      <div class="tk-storm-petal" style="left:74%; top:-12vh; --pc:#ff8c6b; animation-delay:-0.9s;"></div>
+      <div class="tk-storm-petal" style="left:82%; top:-17vh; --pc:#ffd6e0; animation-delay:-1.6s;"></div>
+      <div class="tk-storm-petal" style="left:90%; top:-13vh; --pc:#ffb3c1; animation-delay:-0.4s;"></div>
+      <div class="tk-storm-petal" style="left:97%; top:-18vh; --pc:#f06888; animation-delay:-1.3s;"></div>
+
+      <!-- Soft pink wind glow during the storm -->
+      <div class="tk-wind"></div>
     </div>
 
   </div>
 
   <div class="dusk-veil" id="duskVeil"></div>
+  <div class="home-moon" id="homeMoon"></div>
+  <div class="walk-flash" id="walkFlash"></div>
+  <div class="iris-wipe" id="walkIris"></div>
   <div class="walk-eyebrow" id="walkEyebrow">viii · the journey home</div>
   <div class="walk-caption" id="walkCaption"></div>
   <div class="walk-hearts-burst" id="walkHearts"></div>
@@ -4746,12 +5229,12 @@ function initWalk() {
   // Reset for re-entry
   clearWalkTimers();
   eyebrow.classList.remove("show");
-  caption.classList.remove("show", "globe");
+  caption.classList.remove("show", "globe", "finale");
   cont.classList.remove("show");
   heartsBurst.innerHTML = "";
-  walker.classList.remove("arrived", "dancing", "rushing", "gazing", "celebrating", "flipx", "on-plane", "diving", "freefalling");
+  walker.classList.remove("arrived", "dancing", "rushing", "gazing", "celebrating", "flipx", "on-plane", "diving", "freefalling", "approaching", "embracing", "waltz");
   walker.classList.add("walk-bob");
-  ammi.classList.remove("met", "dancing", "catching", "gazing", "celebrating", "flipx", "on-plane", "diving", "freefalling");
+  ammi.classList.remove("met", "dancing", "catching", "gazing", "celebrating", "flipx", "on-plane", "diving", "freefalling", "embracing", "waltz");
   // Clear inline positions so the next play uses the CSS default (Tishan: calc(50% - 50px), Ammi: 350vw)
   walker.style.left = "";
   ammi.style.left = "";
@@ -4762,6 +5245,18 @@ function initWalk() {
   document.querySelectorAll(".parachute").forEach(p => p.classList.remove("deployed"));
   const bigplaneInit = document.getElementById("skyBigplane");
   if (bigplaneInit) bigplaneInit.classList.remove("arriving", "cruising", "leaving");
+  const skyInit = document.getElementById("trotSkydiving");
+  if (skyInit) skyInit.classList.remove("warm-sky");
+  const tokyoInit = document.getElementById("trotTokyo");
+  if (tokyoInit) tokyoInit.classList.remove("storm");
+  const flashInit = document.getElementById("walkFlash");
+  if (flashInit) flashInit.classList.remove("flash");
+  const glowInit = document.getElementById("embraceGlow");
+  if (glowInit) glowInit.classList.remove("show");
+  const irisInit = document.getElementById("walkIris");
+  if (irisInit) irisInit.classList.remove("closing", "opening");
+  const moonInit = document.getElementById("homeMoon");
+  if (moonInit) moonInit.classList.remove("rising");
   dusk.classList.remove("show");
   ["in-paris", "in-skydiving", "in-penguins", "in-aurora", "in-tokyo"].forEach(c =>
     document.body.classList.remove(c)
@@ -4788,14 +5283,46 @@ function initWalk() {
     ammi.style.left = "50vw";
   }, 22000);
 
+  // 22000-22500: Tishan slows the last few steps, drinking it in
   wt(() => {
     walker.classList.remove("walk-bob");
-    walker.classList.add("arrived");
-    walker.style.left = "calc(50% + 30px)";
-    ammi.style.left = "calc(50% - 30px)";  // tucked just left of center, near walker
-    ammi.classList.add("met");
-    burstWalkHearts(30);
-  }, 22300);
+    walker.classList.add("approaching");
+    walker.style.left = "calc(50% - 80px)";  // a few feet from her, not yet embracing
+  }, 22000);
+
+  // 22500-23200: A held gaze. Both look at each other. Time slows.
+  wt(() => {
+    walker.classList.remove("approaching");
+    walker.classList.add("gazing");
+    ammi.classList.add("gazing");
+    walker.style.left = "calc(50% - 60px)";
+    ammi.style.left   = "calc(50% + 20px)";
+  }, 22500);
+
+  // 23200: He runs the last few steps, embrace + flash + huge heart bloom
+  wt(() => {
+    walker.classList.remove("gazing");
+    ammi.classList.remove("gazing");
+    walker.classList.add("embracing");
+    ammi.classList.add("embracing");
+    walker.style.left = "calc(50% + 18px)";
+    ammi.style.left   = "calc(50% - 18px)";
+
+    // White flash + soft glow bloom around them
+    const flash = document.getElementById("walkFlash");
+    if (flash) {
+      flash.classList.remove("flash");
+      void flash.offsetWidth;
+      flash.classList.add("flash");
+    }
+    const glow = document.getElementById("embraceGlow");
+    if (glow) {
+      glow.classList.remove("show");
+      void glow.offsetWidth;
+      glow.classList.add("show");
+    }
+    burstWalkHearts(40);
+  }, 23200);
 
   wt(() => setCaption("you. always you."), 23800);
 
@@ -4803,8 +5330,8 @@ function initWalk() {
   // After they meet — both burst into a celebration sprint, racing across
   // the screen, hearts trailing.  Sets the energy for the globe-trot.
   wt(() => {
-    walker.classList.remove("arrived");
-    ammi.classList.remove("met");
+    walker.classList.remove("arrived", "embracing", "approaching", "gazing");
+    ammi.classList.remove("met", "embracing", "gazing");
     walker.classList.add("celebrating");
     ammi.classList.add("celebrating");
     walker.style.left = "calc(50% + 26vw)";
@@ -4874,14 +5401,25 @@ function initWalk() {
 
   wt(() => caption.classList.add("globe"), TROT_START - 200);
 
+  const iris = document.getElementById("walkIris");
+
   TROTS.forEach((trot, i) => {
     const t = TROT_START + i * TROT_DUR;
+
+    // Iris-close shortly before each trot starts → cinematic cut
+    wt(() => {
+      if (!iris) return;
+      iris.classList.remove("opening", "closing");
+      void iris.offsetWidth;
+      iris.classList.add("closing");
+    }, t - 450);
+
     // Trot transition + choreography start
     wt(() => {
       document.querySelectorAll(".trot.show").forEach(el => el.classList.remove("show"));
       ALL_TROT_BODY.forEach(c => document.body.classList.remove(c));
-      walker.classList.remove("rushing", "gazing", "walk-bob", "arrived", "celebrating", "flipx", "on-plane", "diving", "freefalling");
-      ammi.classList.remove("catching", "gazing", "celebrating", "flipx", "on-plane", "diving", "freefalling");
+      walker.classList.remove("rushing", "gazing", "walk-bob", "arrived", "celebrating", "flipx", "on-plane", "diving", "freefalling", "approaching", "embracing");
+      ammi.classList.remove("catching", "gazing", "celebrating", "flipx", "on-plane", "diving", "freefalling", "embracing");
       // Reset inline opacity / transition that the skydiving scene sets
       walker.style.opacity = "";
       ammi.style.opacity = "";
@@ -4891,28 +5429,55 @@ function initWalk() {
       document.querySelectorAll(".parachute").forEach(p => p.classList.remove("deployed"));
       const bigplane = document.getElementById("skyBigplane");
       if (bigplane) bigplane.classList.remove("arriving", "cruising", "leaving");
+      const sky = document.getElementById("trotSkydiving");
+      if (sky) sky.classList.remove("warm-sky");
+      const tokyo = document.getElementById("trotTokyo");
+      if (tokyo) tokyo.classList.remove("storm");
       const el = document.getElementById(trot.id);
       if (el) el.classList.add("show");
       document.body.classList.add(trot.bodyClass);
       trot.choreo();
       burstWalkHearts(6);
+
+      // Iris-open: reveal the new world (slight delay so the swap finishes)
+      if (iris) {
+        setTimeout(() => {
+          iris.classList.remove("closing");
+          void iris.offsetWidth;
+          iris.classList.add("opening");
+        }, 60);
+      }
     }, t);
     // Captions per trot (scheduled absolutely)
     trot.captions.forEach(c => wt(() => setCaption(c.text), t + c.t));
   });
 
-  // End of globe-trot — fade trots, clear body classes, return to garden
+  // End of globe-trot — iris-close, then fade trots, clear body classes
   const TROT_END = TROT_START + TROTS.length * TROT_DUR;
+  wt(() => {
+    if (iris) {
+      iris.classList.remove("opening", "closing");
+      void iris.offsetWidth;
+      iris.classList.add("closing");
+    }
+  }, TROT_END - 450);
   wt(() => {
     document.querySelectorAll(".trot.show").forEach(el => el.classList.remove("show"));
     ALL_TROT_BODY.forEach(c => document.body.classList.remove(c));
     caption.classList.remove("globe");
+    if (iris) {
+      setTimeout(() => {
+        iris.classList.remove("closing");
+        void iris.offsetWidth;
+        iris.classList.add("opening");
+      }, 60);
+    }
   }, TROT_END);
 
   // ===== ACT III: home, side by side =====
   wt(() => {
-    walker.classList.remove("dancing", "rushing", "gazing", "walk-bob", "celebrating", "flipx", "on-plane", "diving", "freefalling");
-    ammi.classList.remove("dancing", "catching", "gazing", "celebrating", "flipx", "on-plane", "diving", "freefalling");
+    walker.classList.remove("dancing", "rushing", "gazing", "walk-bob", "celebrating", "flipx", "on-plane", "diving", "freefalling", "approaching", "embracing", "waltz");
+    ammi.classList.remove("dancing", "catching", "gazing", "celebrating", "flipx", "on-plane", "diving", "freefalling", "embracing", "waltz");
     walker.style.opacity = "";
     ammi.style.opacity = "";
     walker.style.transition = "";
@@ -4924,11 +5489,35 @@ function initWalk() {
     ammi.style.left = "calc(50% - 30px)";
     setCaption("we'd see all of it, ammi.");
     dusk.classList.add("show");
-    wakeStars(14);
+
+    // Moon rises behind them
+    const moon = document.getElementById("homeMoon");
+    if (moon) {
+      moon.classList.remove("rising");
+      void moon.offsetWidth;
+      moon.classList.add("rising");
+    }
+
+    // Cascade stars in slowly — more of them, staggered for a wakeful sky
+    cascadeStars(36);
   }, TROT_END + 600);
 
-  wt(() => setCaption("side by side."), TROT_END + 4200);
-  wt(() => setCaption("always."),       TROT_END + 7200);
+  // After a beat, slip into a slow waltz
+  wt(() => {
+    walker.classList.remove("arrived");
+    ammi.classList.remove("met");
+    walker.classList.add("waltz");
+    ammi.classList.add("waltz");
+    walker.style.left = "calc(50% + 22px)";
+    ammi.style.left = "calc(50% - 22px)";
+    setCaption("side by side.");
+  }, TROT_END + 4200);
+
+  // Final, biggest caption — "always."
+  wt(() => {
+    setCaption("always.");
+    caption.classList.add("finale");
+  }, TROT_END + 7200);
 
   // Continue
   wt(() => cont.classList.add("show"), TROT_END + 9200);
@@ -4991,8 +5580,12 @@ function choreographSkydiving() {
   const walker = document.getElementById("walkTishan");
   const ammi   = document.getElementById("walkAmmi");
   const plane  = document.getElementById("skyBigplane");
+  const trotEl = document.getElementById("trotSkydiving");
   const tishanChute = document.querySelector(".parachute.tishan-chute");
   const ammiChute   = document.querySelector(".parachute.ammi-chute");
+
+  // Reset sky to cool — it'll warm as they fall
+  if (trotEl) trotEl.classList.remove("warm-sky");
 
   // Hide them while the plane is arriving — they appear already aboard
   walker.style.opacity = "0";
@@ -5023,7 +5616,7 @@ function choreographSkydiving() {
     ammi.style.opacity   = "1";
   }, 1100);
 
-  // 2. JUMP! Both tumble out of the plane.
+  // 2. JUMP! Both tumble out of the plane. Sky starts warming.
   wt(() => {
     walker.style.transition = "";
     ammi.style.transition   = "";
@@ -5031,6 +5624,7 @@ function choreographSkydiving() {
     ammi.classList.remove("on-plane");
     walker.classList.add("diving");
     ammi.classList.add("diving");
+    if (trotEl) trotEl.classList.add("warm-sky");
     burstWalkHearts(8);
   }, 1500);
 
@@ -5086,13 +5680,21 @@ function choreographAurora() {
 }
 
 /* TOKYO: Tishan rushes ahead under the lanterns. Ammi twirls in.
-   They meet at the pagoda. */
+   They meet at the pagoda — then a petal storm sweeps through. */
 function choreographTokyo() {
+  const tokyoEl = document.getElementById("trotTokyo");
+  if (tokyoEl) tokyoEl.classList.remove("storm");
+
   rushTo("calc(50% - 90px)");
   wt(() => catchTo("calc(50% + 20px)"), 900);
   wt(() => settleTishan("calc(50% - 30px)"), 2000);
   wt(() => settleAmmi("calc(50% + 30px)"),   2300);
-  wt(() => burstWalkHearts(8), 3000);
+  // Petal storm intensifies as they meet
+  wt(() => {
+    if (tokyoEl) tokyoEl.classList.add("storm");
+  }, 2400);
+  wt(() => burstWalkHearts(12), 3000);
+  wt(() => burstWalkHearts(8),  3800);
 }
 
 function burstWalkHearts(count = 30) {
@@ -5180,6 +5782,26 @@ function wakeStars(n) {
       s.style.height = sz + "px";
       scene.appendChild(s);
     }, i * 180);
+  }
+}
+
+/* cascadeStars — starlight pours in slowly across most of the sky.
+   Brighter, longer-lived, and seeded across the upper 50% of the scene. */
+function cascadeStars(n = 30) {
+  const scene = document.getElementById("scene-walk");
+  for (let i = 0; i < n; i++) {
+    walkTimers.push(setTimeout(() => {
+      const s = document.createElement("div");
+      s.className = "dance-star";
+      s.style.left = (4 + Math.random() * 92) + "%";
+      s.style.top  = (2 + Math.random() * 50) + "%";
+      const sz = 2 + Math.random() * 4;
+      s.style.width = sz + "px";
+      s.style.height = sz + "px";
+      // Brighter shadow for the cascade — feels like a wakeful sky
+      s.style.boxShadow = "0 0 12px #fff8e0, 0 0 28px rgba(255, 248, 224, 0.4)";
+      scene.appendChild(s);
+    }, i * 220));
   }
 }
 
