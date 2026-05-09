@@ -785,9 +785,10 @@
     left: calc(50% - 50px);
     width: 96px;
     height: 132px;
-    z-index: 10;
+    z-index: 12;
     filter: drop-shadow(0 8px 4px rgba(58, 36, 24, 0.25));
     transform-origin: 50% 100%;
+    transition: left 0.9s cubic-bezier(.4, 0, .2, 1);
   }
   .walker .frame {
     position: absolute;
@@ -808,28 +809,60 @@
   }
   .walker.arrived {
     animation: walkerLean 1.2s ease-in-out infinite;
-    left: calc(50% + 30px);
-    transition: left 0.8s var(--ease-soft);
   }
   @keyframes walkerLean {
     0%, 100% { transform: translateY(0) rotate(0deg) translateX(0); }
     50%      { transform: translateY(-3px) rotate(-8deg) translateX(-8px); }
+  }
+  /* Tishan rushing ahead — faster step, more lean, dust trail */
+  .walker.rushing {
+    animation: walkerRush 0.22s ease-in-out infinite;
+  }
+  @keyframes walkerRush {
+    0%, 100% { transform: translateY(0)    rotate(-4deg); }
+    50%      { transform: translateY(-7px) rotate(4deg); }
+  }
+  .walker.rushing .frame.a { animation: stepSwap 0.18s steps(1) infinite; }
+  .walker.rushing .frame.b { animation: stepSwap 0.18s steps(1) infinite reverse; }
+  .walker.rushing::after {
+    content: "";
+    position: absolute;
+    bottom: 4px;
+    left: -28px;
+    width: 36px;
+    height: 8px;
+    background: radial-gradient(ellipse, rgba(255, 246, 233, 0.7) 20%, transparent 70%);
+    filter: blur(2px);
+    animation: dustTrail 0.4s ease-out infinite;
+  }
+  @keyframes dustTrail {
+    0%   { opacity: 0; transform: translateX(0); }
+    50%  { opacity: 1; }
+    100% { opacity: 0; transform: translateX(-22px); }
+  }
+  /* "Looking up" pose — for aurora moment */
+  .walker.gazing, .ammi-waiting.gazing {
+    animation: gazeUp 4s ease-in-out infinite;
+  }
+  @keyframes gazeUp {
+    0%, 100% { transform: translateY(0)    rotate(0deg); }
+    50%      { transform: translateY(-4px) rotate(0deg); }
   }
 
   /* Ammi — sibling of the world. Scrolls in independently, so she stays above globe-trot overlays. */
   .ammi-waiting {
     position: absolute;
     bottom: 22vh;
-    left: 350vw;          /* off-screen right initially — matches biome-4's center when world finishes scrolling */
+    left: 350vw;          /* off-screen right initially */
     width: 96px;
     height: 132px;
     z-index: 11;          /* above trot overlays (z 7) */
     filter: drop-shadow(0 8px 4px rgba(58, 36, 24, 0.25));
     transform-origin: 50% 100%;
     animation: ammiIdle 1.4s ease-in-out infinite;
+    transition: left 0.9s cubic-bezier(.4, 0, .2, 1);
   }
   .ammi-waiting.scroll-in {
-    /* Synced to world.go: same 22s, same easing curve */
     animation:
       ammiScrollIn 22s cubic-bezier(.42, 0, .58, 1) forwards,
       ammiIdle 1.4s ease-in-out infinite;
@@ -847,6 +880,16 @@
     0%, 100% { transform: translateY(0)    rotate(-2deg); }
     50%      { transform: translateY(-5px) rotate(2deg); }
   }
+  /* When Ammi is "catching up" — faster bob, slight forward lean */
+  .ammi-waiting.catching {
+    animation: ammiCatching 0.32s ease-in-out infinite, ammiIdle 1.4s ease-in-out infinite;
+  }
+  @keyframes ammiCatching {
+    0%, 100% { transform: translateY(0)   rotate(-6deg); }
+    50%      { transform: translateY(-6px) rotate(2deg); }
+  }
+  .ammi-waiting.catching .frame.a { animation: stepSwap 0.28s steps(1) infinite; }
+  .ammi-waiting.catching .frame.b { animation: stepSwap 0.28s steps(1) infinite reverse; }
   .ammi-waiting.met {
     animation: ammiHug 1.2s ease-in-out infinite;
   }
@@ -1777,22 +1820,22 @@
   .tk-torii .pillar-l { left: 12px; }
   .tk-torii .pillar-r { right: 12px; }
 
-  /* ============= per-scene character poses ============= */
-  body.in-skydiving .walker { animation: freefallTishan 0.6s ease-in-out infinite; }
-  body.in-skydiving .ammi-waiting { animation: freefallAmmi 0.6s ease-in-out infinite, ammiIdle 1.4s ease-in-out infinite; }
-  @keyframes freefallTishan {
-    0%, 100% { transform: translateY(-2px) rotate(-4deg); }
-    50%      { transform: translateY(2px)  rotate(4deg); }
-  }
-  @keyframes freefallAmmi {
-    0%, 100% { transform: translateY(-2px) rotate(4deg); }
-    50%      { transform: translateY(2px)  rotate(-4deg); }
-  }
+  /* ============= per-scene visual filters (transform-safe — won't break positioning) ============= */
   body.in-aurora .walker, body.in-aurora .ammi-waiting {
-    filter: drop-shadow(0 8px 4px rgba(0,0,0,0.4)) brightness(0.9) drop-shadow(0 0 8px rgba(0, 255, 170, 0.3));
+    filter: drop-shadow(0 8px 4px rgba(0,0,0,0.4)) brightness(0.85) drop-shadow(0 0 10px rgba(0, 255, 170, 0.35));
   }
-  body.in-tokyo .walker { animation: walkerLean 1s ease-in-out infinite; }
-  body.in-tokyo .ammi-waiting { animation: ammiHug 1s ease-in-out infinite, ammiIdle 1.4s ease-in-out infinite; }
+  body.in-skydiving .walker, body.in-skydiving .ammi-waiting {
+    filter: drop-shadow(0 12px 8px rgba(0,0,0,0.3));
+  }
+  body.in-paris .walker, body.in-paris .ammi-waiting {
+    filter: drop-shadow(0 8px 4px rgba(58, 36, 24, 0.35)) drop-shadow(0 0 6px rgba(255, 217, 128, 0.25));
+  }
+  body.in-tokyo .walker, body.in-tokyo .ammi-waiting {
+    filter: drop-shadow(0 8px 4px rgba(58, 36, 24, 0.35)) drop-shadow(0 0 8px rgba(240, 104, 136, 0.3));
+  }
+  body.in-penguins .walker, body.in-penguins .ammi-waiting {
+    filter: drop-shadow(0 8px 4px rgba(58, 36, 24, 0.4)) drop-shadow(0 0 6px rgba(184, 216, 236, 0.4));
+  }
 
   /* ----- SKYDIVING ----- */
   .trot-skydiving {
@@ -4448,9 +4491,12 @@ function initWalk() {
   caption.classList.remove("show", "globe");
   cont.classList.remove("show");
   heartsBurst.innerHTML = "";
-  walker.classList.remove("arrived", "dancing");
+  walker.classList.remove("arrived", "dancing", "rushing", "gazing");
   walker.classList.add("walk-bob");
-  ammi.classList.remove("met", "dancing");
+  ammi.classList.remove("met", "dancing", "catching", "gazing");
+  // Clear inline positions so the next play uses the CSS default (Tishan: calc(50% - 50px), Ammi: 350vw)
+  walker.style.left = "";
+  ammi.style.left = "";
   dusk.classList.remove("show");
   ["in-paris", "in-skydiving", "in-penguins", "in-aurora", "in-tokyo"].forEach(c =>
     document.body.classList.remove(c)
@@ -4471,45 +4517,89 @@ function initWalk() {
   // Captions during the journey
   ADVENTURE_CAPTIONS.forEach(({ t, text }) => wt(() => setCaption(text), t));
 
-  // ===== ACT I: meet (existing beat) =====
+  // ===== ACT I: meet =====
+  // World scroll completes at 22000ms — lock Ammi's left position BEFORE .met overrides her animation
+  wt(() => {
+    ammi.style.left = "50vw";
+  }, 22000);
+
   wt(() => {
     walker.classList.remove("walk-bob");
     walker.classList.add("arrived");
+    walker.style.left = "calc(50% + 30px)";
+    ammi.style.left = "calc(50% - 30px)";  // tucked just left of center, near walker
     ammi.classList.add("met");
     burstWalkHearts(30);
-  }, 21000);
+  }, 22300);
 
-  wt(() => setCaption("you. always you."), 22500);
+  wt(() => setCaption("you. always you."), 23800);
 
   // ===== ACT II: globetrotting montage =====
-  // 5 destinations, 4.6s each → 23s of globe-trot
+  // 5 destinations, 5s each → 25s of globe-trot
   const TROTS = [
-    { id: "trotParis",     bodyClass: "in-paris",     caption: "we'd see paris." },
-    { id: "trotSkydiving", bodyClass: "in-skydiving", caption: "leap from the sky." },
-    { id: "trotPenguins",  bodyClass: "in-penguins",  caption: "say hi to the penguins." },
-    { id: "trotAurora",    bodyClass: "in-aurora",    caption: "chase the lights." },
-    { id: "trotTokyo",     bodyClass: "in-tokyo",     caption: "dance under the blossoms." },
+    {
+      id: "trotParis", bodyClass: "in-paris",
+      captions: [
+        { t: 200,  text: "we'd see paris." },
+        { t: 2400, text: "i'd race ahead — you'd catch up, laughing." },
+      ],
+      choreo: choreographParis,
+    },
+    {
+      id: "trotSkydiving", bodyClass: "in-skydiving",
+      captions: [
+        { t: 200,  text: "leap from the sky together." },
+        { t: 2600, text: "freefall. just us." },
+      ],
+      choreo: choreographSkydiving,
+    },
+    {
+      id: "trotPenguins", bodyClass: "in-penguins",
+      captions: [
+        { t: 200,  text: "say hi to the penguins." },
+        { t: 2600, text: "you laughed at me running after them." },
+      ],
+      choreo: choreographAntarctica,
+    },
+    {
+      id: "trotAurora", bodyClass: "in-aurora",
+      captions: [
+        { t: 200,  text: "chase the lights." },
+        { t: 2800, text: "stop and look up. quietly. together." },
+      ],
+      choreo: choreographAurora,
+    },
+    {
+      id: "trotTokyo", bodyClass: "in-tokyo",
+      captions: [
+        { t: 200,  text: "dance under the blossoms." },
+        { t: 2800, text: "you twirled. i tried to keep up." },
+      ],
+      choreo: choreographTokyo,
+    },
   ];
-  const TROT_DUR = 4600;
-  const TROT_START = 25500;
+  const TROT_DUR = 5000;
+  const TROT_START = 26500;
   const ALL_TROT_BODY = TROTS.map(t => t.bodyClass);
 
   wt(() => caption.classList.add("globe"), TROT_START - 200);
 
   TROTS.forEach((trot, i) => {
     const t = TROT_START + i * TROT_DUR;
+    // Trot transition + choreography start
     wt(() => {
-      // Hide previous trot
       document.querySelectorAll(".trot.show").forEach(el => el.classList.remove("show"));
-      // Clear any per-scene body class
       ALL_TROT_BODY.forEach(c => document.body.classList.remove(c));
-      // Show current
+      walker.classList.remove("rushing", "gazing", "walk-bob", "arrived");
+      ammi.classList.remove("catching", "gazing");
       const el = document.getElementById(trot.id);
       if (el) el.classList.add("show");
       document.body.classList.add(trot.bodyClass);
-      setCaption(trot.caption);
-      burstWalkHearts(8);
+      trot.choreo();
+      burstWalkHearts(6);
     }, t);
+    // Captions per trot (scheduled absolutely)
+    trot.captions.forEach(c => wt(() => setCaption(c.text), t + c.t));
   });
 
   // End of globe-trot — fade trots, clear body classes, return to garden
@@ -4522,10 +4612,12 @@ function initWalk() {
 
   // ===== ACT III: home, side by side =====
   wt(() => {
-    walker.classList.remove("dancing");
-    ammi.classList.remove("dancing");
+    walker.classList.remove("dancing", "rushing", "gazing", "walk-bob");
+    ammi.classList.remove("dancing", "catching", "gazing");
     walker.classList.add("arrived");
     ammi.classList.add("met");
+    walker.style.left = "calc(50% + 30px)";
+    ammi.style.left = "calc(50% - 30px)";
     setCaption("we'd see all of it, ammi.");
     dusk.classList.add("show");
     wakeStars(14);
@@ -4536,6 +4628,97 @@ function initWalk() {
 
   // Continue
   wt(() => cont.classList.add("show"), TROT_END + 9200);
+}
+
+/* ==========================================================
+   Globe-trot choreography — directs each scene's story beats
+   ========================================================== */
+function rushTo(left, opts = {}) {
+  const walker = document.getElementById("walkTishan");
+  walker.classList.remove("walk-bob", "arrived", "gazing");
+  walker.classList.add("rushing");
+  walker.style.left = left;
+  if (opts.then) wt(() => { walker.classList.remove("rushing"); opts.then(); }, opts.duration ?? 900);
+}
+function settleTishan(left, klass = "arrived") {
+  const walker = document.getElementById("walkTishan");
+  walker.classList.remove("walk-bob", "rushing", "gazing");
+  walker.classList.add(klass);
+  walker.style.left = left;
+}
+function catchTo(left, opts = {}) {
+  const ammi = document.getElementById("walkAmmi");
+  ammi.classList.remove("met", "dancing", "gazing");
+  ammi.classList.add("catching");
+  ammi.style.left = left;
+  if (opts.then) wt(() => { ammi.classList.remove("catching"); opts.then(); }, opts.duration ?? 900);
+}
+function settleAmmi(left, klass = "met") {
+  const ammi = document.getElementById("walkAmmi");
+  ammi.classList.remove("catching", "dancing", "gazing");
+  ammi.classList.add(klass);
+  ammi.style.left = left;
+}
+function gazeBoth(walkerLeft, ammiLeft) {
+  const walker = document.getElementById("walkTishan");
+  const ammi   = document.getElementById("walkAmmi");
+  walker.classList.remove("rushing", "arrived", "walk-bob");
+  ammi.classList.remove("catching", "met", "dancing");
+  walker.classList.add("gazing");
+  ammi.classList.add("gazing");
+  walker.style.left = walkerLeft;
+  ammi.style.left   = ammiLeft;
+}
+
+/* PARIS: Tishan rushes ahead toward the tower. Ammi catches up laughing.
+   They settle, look up, hearts. */
+function choreographParis() {
+  rushTo("calc(50% - 100px)");
+  wt(() => catchTo("calc(50% + 30px)"),     900);
+  wt(() => settleTishan("calc(50% - 30px)"), 1900);
+  wt(() => settleAmmi("calc(50% + 30px)"),   2200);
+  wt(() => gazeBoth("calc(50% - 30px)", "calc(50% + 30px)"), 3200);
+  wt(() => burstWalkHearts(6), 3400);
+}
+
+/* SKYDIVING: Already falling. They drift apart, then together. */
+function choreographSkydiving() {
+  // Spread apart in freefall
+  settleTishan("calc(50% - 110px)");
+  settleAmmi("calc(50% + 80px)", "met");
+  // Then drift together mid-air
+  wt(() => settleTishan("calc(50% - 50px)"), 1800);
+  wt(() => settleAmmi("calc(50% + 30px)"),    2000);
+  wt(() => burstWalkHearts(6), 3000);
+}
+
+/* ANTARCTICA: Tishan dashes into the penguin colony. Ammi follows,
+   laughing.  They stop together among the penguins. */
+function choreographAntarctica() {
+  rushTo("calc(50% + 110px)");
+  wt(() => catchTo("calc(50% + 40px)"), 900);
+  wt(() => settleTishan("calc(50% + 80px)"), 1900);
+  wt(() => settleAmmi("calc(50% + 30px)"),    2200);
+  wt(() => burstWalkHearts(6), 3000);
+}
+
+/* AURORA: Quiet awe. Both walk slowly to lake's edge, then look up. */
+function choreographAurora() {
+  // Slowly walk close together toward center-left (the lake edge)
+  settleTishan("calc(50% - 60px)");
+  settleAmmi("calc(50% + 30px)", "met");
+  // Both gaze up at the lights
+  wt(() => gazeBoth("calc(50% - 40px)", "calc(50% + 20px)"), 1400);
+}
+
+/* TOKYO: Tishan rushes ahead under the lanterns. Ammi twirls in.
+   They meet at the pagoda. */
+function choreographTokyo() {
+  rushTo("calc(50% - 90px)");
+  wt(() => catchTo("calc(50% + 20px)"), 900);
+  wt(() => settleTishan("calc(50% - 30px)"), 2000);
+  wt(() => settleAmmi("calc(50% + 30px)"),   2300);
+  wt(() => burstWalkHearts(8), 3000);
 }
 
 function burstWalkHearts(count = 30) {
