@@ -249,6 +249,8 @@
     cursor: none;
     padding: 1em 1.4em;
     pointer-events: none;
+    /* Sits above scene chrome (e.g. garden soil at z:3) so taps register */
+    z-index: 50;
   }
   .continue.show { opacity: 1; pointer-events: auto; animation: pulseSoft 3.4s ease-in-out infinite; }
   body.night .continue { color: var(--butter); }
@@ -4634,7 +4636,7 @@ document.body.addEventListener("click", e => {
   if (e.target.closest("#audioToggle")) return;
   if (e.target.closest("#homeLink")) { showScene(0); return; }
   if (sid === "scene-constellation") { if (e.target.closest("#constContinue")) next(); return; }
-  if (sid === "scene-garden") { if (e.target.closest("#gardenSoil")) return; if (e.target.closest("#gardenContinue")) next(); return; }
+  if (sid === "scene-garden") { if (e.target.closest("#gardenContinue")) { next(); return; } if (e.target.closest("#gardenSoil")) return; return; }
   if (sid === "scene-gallery") { if (e.target.closest("#galleryContinue")) { next(); return; } galleryAdvance(); return; }
   if (sid === "scene-letter") return;
   next();
