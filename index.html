@@ -214,6 +214,24 @@
   body.night .scene::before {
     background: linear-gradient(180deg, rgba(45, 28, 71, 0.4) 0%, transparent 40%, rgba(13, 8, 34, 0.7) 100%);
   }
+  /* Stronger cream scrim on scenes that have a photo background, so the
+     dark serif text stays readable over busy/dark imagery. */
+  .scene:has(.photo-bg)::before {
+    background:
+      radial-gradient(ellipse 80% 65% at 50% 50%,
+        rgba(255, 246, 233, 0.78) 0%,
+        rgba(255, 246, 233, 0.55) 40%,
+        rgba(255, 246, 233, 0.35) 70%,
+        rgba(255, 246, 233, 0.45) 100%);
+  }
+  body.night .scene:has(.photo-bg)::before {
+    background:
+      radial-gradient(ellipse 80% 65% at 50% 50%,
+        rgba(13, 8, 34, 0.78) 0%,
+        rgba(13, 8, 34, 0.55) 40%,
+        rgba(13, 8, 34, 0.35) 70%,
+        rgba(13, 8, 34, 0.55) 100%);
+  }
 
   /* ==================================================================
      Typography
@@ -253,6 +271,34 @@
   .display.small  { font-size: clamp(1.6rem, 3.6vw, 2.6rem); max-width: 28ch; }
   body.night .display { color: var(--cream); text-shadow: 0 1px 12px rgba(0,0,0,0.5); }
   body.night .display.italic { color: var(--butter); }
+
+  /* Photo-bg scenes — give every line a soft cream halo so the dark
+     serif reads cleanly over busy/dark imagery */
+  .scene:has(.photo-bg) .display {
+    text-shadow:
+      0 0 22px rgba(255, 246, 233, 0.95),
+      0 0 12px rgba(255, 246, 233, 0.95),
+      0 0 4px  rgba(255, 246, 233, 0.95),
+      0 1px 2px rgba(0, 0, 0, 0.18);
+  }
+  .scene:has(.photo-bg) .display.italic {
+    /* Pink italic gets a slightly cooler dark glow so it pops without muddying */
+    text-shadow:
+      0 0 22px rgba(255, 246, 233, 0.85),
+      0 0 12px rgba(255, 246, 233, 0.85),
+      0 1px 2px rgba(58, 36, 24, 0.35);
+  }
+  .scene:has(.photo-bg) .eyebrow {
+    text-shadow:
+      0 0 14px rgba(255, 246, 233, 0.95),
+      0 0 4px  rgba(255, 246, 233, 0.95);
+  }
+  body.night .scene:has(.photo-bg) .display {
+    text-shadow:
+      0 0 22px rgba(13, 8, 34, 0.95),
+      0 0 12px rgba(13, 8, 34, 0.95),
+      0 0 4px  rgba(13, 8, 34, 0.95);
+  }
 
   .display + .display { margin-top: 1.2em; }
 
