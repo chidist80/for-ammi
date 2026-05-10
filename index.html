@@ -142,7 +142,7 @@
   body.night .cursor.large { background: rgba(247, 211, 107, 0.18); border-color: var(--butter); }
   @media (pointer: coarse) {
     .cursor { display: none; }
-    html, body { cursor: default; }
+    html, body, * { cursor: default !important; }
   }
 
   /* ==================================================================
@@ -3762,6 +3762,121 @@
     .letter-paper { padding: 2.5em 1.5em; }
     .days-grid { grid-template-columns: repeat(20, 1fr); gap: 4px; }
     .flourish, .flourish-bottom { display: none; }
+  }
+
+  /* ==================================================================
+     MOBILE — adventure scene scaling so sprites/scenery fit narrow phones
+     ================================================================== */
+  @media (max-width: 600px) {
+    /* Walker + Ammi: smaller sprites, lower bottom so they don't sit too high */
+    .walker, .ammi-waiting {
+      width: 64px;
+      height: 88px;
+      bottom: 18vh;
+    }
+    /* Walker captions / continue */
+    .walk-caption { font-size: clamp(1.05rem, 4.6vw, 1.5rem); padding: 0 6vw; }
+    .walk-caption.finale { font-size: clamp(1.4rem, 6vw, 2rem) !important; }
+    .walk-eyebrow { font-size: 0.65rem; }
+
+    /* Skydiving — smaller plane, lower so head doesn't get cut off */
+    .sky-bigplane {
+      width: 220px;
+      height: 68px;
+      top: 18vh;
+    }
+    .sky-bigplane.arriving {
+      animation: bigPlaneArriveMobile 1.6s cubic-bezier(.2,.6,.3,1) forwards;
+    }
+    @keyframes bigPlaneArriveMobile {
+      0%   { left: -55vw; opacity: 0; }
+      20%  { opacity: 1; }
+      100% { left: calc(50% - 110px); opacity: 1; }
+    }
+    .sky-bigplane.cruising { left: calc(50% - 110px); }
+    .sky-bigplane .banner {
+      width: 160px;
+      height: 26px;
+      font-size: 10px;
+      left: -180px;
+    }
+    .sky-bigplane .banner::before { right: -16px; width: 16px; }
+    .sky-bigplane .banner::after  { width: 12px; left: -10px; }
+
+    /* Walker on-plane: shorter lift to match the lower plane and shorter sprite */
+    @keyframes planeRideBob {
+      0%, 100% { transform: translateY(calc(-58vh + 36px)) rotate(-1deg); }
+      50%      { transform: translateY(calc(-58vh + 30px)) rotate(1deg); }
+    }
+    @keyframes skyJump {
+      0%   { transform: translateY(calc(-58vh + 36px)) rotate(-20deg); }
+      15%  { transform: translateY(calc(-54vh + 36px)) rotate(40deg); }
+      35%  { transform: translateY(calc(-40vh + 36px)) rotate(140deg); }
+      55%  { transform: translateY(calc(-24vh + 36px)) rotate(260deg); }
+      75%  { transform: translateY(calc(-10vh + 36px)) rotate(360deg); }
+      100% { transform: translateY(0)                  rotate(360deg); }
+    }
+    /* Smaller parachutes that sit just above the smaller sprite */
+    .parachute {
+      width: 60px;
+      height: 38px;
+      bottom: calc(18vh + 88px);
+    }
+    .parachute .canopy { height: 26px; }
+    .parachute .strings { top: 26px; width: 36px; height: 12px; }
+    .parachute.tishan-chute { left: calc(50% - 80px); }
+    .parachute.ammi-chute   { left: calc(50% + 18px); }
+
+    /* Paris — smaller eiffel + buildings so skyline doesn't dominate */
+    .paris-eiffel {
+      width: 110px;
+      height: 200px;
+    }
+    .paris-skyline { height: 11vh; }
+    .paris-bldg { transform-origin: bottom center; transform: scale(0.7); }
+    .paris-balloon { width: 24px; height: 40px; }
+    .paris-balloon::before { height: 24px; }
+    .paris-moon { width: 38px; height: 38px; }
+
+    /* Tokyo — smaller pagoda + torii */
+    .tk-pagoda { width: 100px; height: 160px; }
+    .tk-torii { transform: scale(0.65); transform-origin: bottom center; }
+    .tk-cherry-tree { transform: scale(0.7); transform-origin: bottom center; }
+    .tk-lantern { transform: scale(0.8); }
+
+    /* Antarctica — smaller penguins, icebergs */
+    .penguin { transform: scale(0.7); transform-origin: bottom center; }
+    .iceberg { transform: scale(0.7); transform-origin: bottom center; }
+
+    /* Aurora — pines smaller */
+    .aurora-pine { transform: scale(0.7); transform-origin: bottom center; }
+
+    /* Big tree at home — narrower so it doesn't crowd the meet */
+    .b-bigtree { width: 160px; height: 200px; }
+    .b-bigtree::before { height: 70px; }
+    .b-bigtree::after  { height: 140px; }
+
+    /* Home moon — slightly smaller and to the upper-right */
+    .home-moon { width: 64px; height: 64px; right: 12%; }
+    @keyframes moonRise {
+      0%   { bottom: -100px; opacity: 0; }
+      20%  { opacity: 1; }
+      100% { bottom: 50vh;  opacity: 1; }
+    }
+
+    /* Trees/mountains in walking journey — tighten heights so they don't poke into ground */
+    .b-tree { transform: scale(0.7); transform-origin: bottom center; }
+    .b-mountain { transform: scaleY(0.85); transform-origin: bottom center; }
+
+    /* Ammi distant silhouette — slightly smaller */
+    .b-ammi-distant { width: 14px; height: 22px; }
+
+    /* Continue button — beefier tap target */
+    #scene-walk .continue {
+      font-size: 0.75rem;
+      padding: 14px 22px;
+      letter-spacing: 0.32em;
+    }
   }
 </style>
 </head>
