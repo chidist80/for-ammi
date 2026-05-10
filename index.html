@@ -4636,7 +4636,13 @@ document.body.addEventListener("click", e => {
   if (e.target.closest("#audioToggle")) return;
   if (e.target.closest("#homeLink")) { showScene(0); return; }
   if (sid === "scene-constellation") { if (e.target.closest("#constContinue")) next(); return; }
-  if (sid === "scene-garden") { if (e.target.closest("#gardenContinue")) { next(); return; } if (e.target.closest("#gardenSoil")) return; return; }
+  if (sid === "scene-garden") {
+    // Once the garden is complete, ANY tap advances to the adventure
+    if (gardenComplete) { next(); return; }
+    if (e.target.closest("#gardenContinue")) { next(); return; }
+    if (e.target.closest("#gardenSoil")) return;
+    return;
+  }
   if (sid === "scene-gallery") { if (e.target.closest("#galleryContinue")) { next(); return; } galleryAdvance(); return; }
   if (sid === "scene-letter") return;
   next();
@@ -5029,15 +5035,27 @@ function initGarden() {
   if (!gardenInit) {
     gardenInit = true;
     soil.addEventListener("click", e => {
+      // After garden is complete, soil taps advance the scene (fallback for
+      // narrow tap targets on mobile)
+      if (gardenComplete) { next(); return; }
       const r = soil.getBoundingClientRect();
       plantFlower(e.clientX - r.left, e.clientY - r.top);
     });
     soil.addEventListener("touchstart", e => {
+      if (gardenComplete) { e.preventDefault(); next(); return; }
       if (e.touches[0]) {
         const r = soil.getBoundingClientRect();
         plantFlower(e.touches[0].clientX - r.left, e.touches[0].clientY - r.top);
       }
-    }, { passive: true });
+    }, { passive: false });
+
+    // Direct listeners on the continue button — don't rely on body delegation
+    const advanceFromGarden = (e) => {
+      if (e) { e.preventDefault?.(); e.stopPropagation?.(); }
+      next();
+    };
+    cont.addEventListener("click", advanceFromGarden);
+    cont.addEventListener("touchend", advanceFromGarden, { passive: false });
   }
 
   // If already finished, show final state
